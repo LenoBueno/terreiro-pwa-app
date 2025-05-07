@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -160,5 +161,51 @@ export default function AdminProfilePage() {
                 <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
                 <Input id="confirm-password" type="password" />
               </div>
-            \
-\
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <Button>Atualizar Senha</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle>Preferências de Notificação</CardTitle>
+              <CardDescription>
+                Configure como deseja receber notificações
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between space-y-2">
+                <div>
+                  <h3 className="text-sm font-medium">Notificações por Email</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Receba atualizações por email
+                  </p>
+                </div>
+                <div>
+                  {/* Aqui seria implementado um toggle switch */}
+                  <input 
+                    type="checkbox" 
+                    checked={profile.notifications.email} 
+                    onChange={(e) => setProfile({
+                      ...profile, 
+                      notifications: {
+                        ...profile.notifications,
+                        email: e.target.checked
+                      }
+                    })} 
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-end">
+              <Button>Salvar Preferências</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
