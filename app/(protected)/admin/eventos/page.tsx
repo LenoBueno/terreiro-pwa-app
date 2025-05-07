@@ -31,12 +31,13 @@ export default function AdminEventosPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Gerenciar Eventos</h1>
+      <h1 className="admin-title">Gerenciar Eventos</h1>
 
-      <div className="relative w-full">
+      {/* Barra de pesquisa */}
+      <div className="relative w-full max-w-xs mb-4">
         <Input
           type="search"
-          placeholder="Procurar eventos"
+          placeholder="Procurar"
           className="w-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -48,13 +49,24 @@ export default function AdminEventosPage() {
         )}
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex border-b">
+      {/* Botões à esquerda e abas à direita */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" className="admin-button" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+          <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
+            <Plus className="mr-2 h-4 w-4" />
+            Adicionar
+          </Button>
+        </div>
+        <div className="flex border-b ml-4">
           <button
             onClick={() => setActiveTab("proximos")}
-            className={`px-4 py-2 text-sm ${
+            className={`admin-tab ${
               activeTab === "proximos"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
@@ -62,32 +74,21 @@ export default function AdminEventosPage() {
           </button>
           <button
             onClick={() => setActiveTab("passados")}
-            className={`px-4 py-2 text-sm ${
+            className={`admin-tab ${
               activeTab === "passados"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
             Passados
           </button>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Button className="bg-terreiro-green hover:bg-terreiro-green/90">
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar
-          </Button>
-          <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-        </div>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
         {filteredEventos.map((evento) => (
           <div key={evento.id} className="rounded-md border border-gray-200 p-4">
-            <div className="mb-4 text-center font-medium">{evento.nome}</div>
+            <div className="mb-4 text-center admin-subtitle">{evento.nome}</div>
             <div className="flex justify-between">
               <button>
                 <Edit size={18} className="text-gray-600" />

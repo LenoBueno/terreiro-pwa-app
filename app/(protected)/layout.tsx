@@ -8,10 +8,11 @@ export default function ProtectedLayout({
 }) {
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="flex gap-4">
-          {/* Sidebar is now handled in specific layouts */}
-          <div className="flex-1 bg-white rounded-lg p-6">{children}</div>
+      <div className="min-h-screen bg-[#f7f8fa] p-4 flex items-center justify-center rounded-3xl">
+        <div className="flex w-full max-w-[1600px] gap-8">
+          <main className="flex-1 rounded-2xl p-8 shadow-sm min-h-[90vh]">
+            {children}
+          </main>
         </div>
       </div>
     </ProtectedRoute>

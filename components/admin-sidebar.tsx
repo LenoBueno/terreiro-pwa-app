@@ -58,7 +58,7 @@ export function AdminSidebar() {
   }
 
   return (
-    <div className="w-[180px] bg-white rounded-lg p-4 flex flex-col h-auto">
+    <div className="w-[220px] bg-white rounded-lg p-9 flex flex-col h-auto">
       <div className="flex items-center gap-2 mb-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-terreiro-green text-white">
           <Leaf size={16} />

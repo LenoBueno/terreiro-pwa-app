@@ -31,12 +31,13 @@ export default function AdminMensagensPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Gerenciar Mensagens</h1>
+      <h1 className="admin-title">Gerenciar Mensagens</h1>
 
-      <div className="relative w-full">
+      {/* Barra de pesquisa */}
+      <div className="relative w-full max-w-xs mb-4">
         <Input
           type="search"
-          placeholder="Procurar mensagens"
+          placeholder="Procurar"
           className="w-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
@@ -48,13 +49,24 @@ export default function AdminMensagensPage() {
         )}
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="flex border-b">
+      {/* Botões à esquerda e abas à direita */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" className="admin-button" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+          <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
+            <Plus className="mr-2 h-4 w-4" />
+            Adicionar
+          </Button>
+        </div>
+        <div className="flex border-b ml-4">
           <button
             onClick={() => setActiveTab("todas")}
-            className={`px-4 py-2 text-sm ${
+            className={`admin-tab ${
               activeTab === "todas"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
@@ -62,9 +74,9 @@ export default function AdminMensagensPage() {
           </button>
           <button
             onClick={() => setActiveTab("enviadas")}
-            className={`px-4 py-2 text-sm ${
+            className={`admin-tab ${
               activeTab === "enviadas"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
@@ -72,32 +84,21 @@ export default function AdminMensagensPage() {
           </button>
           <button
             onClick={() => setActiveTab("rascunhos")}
-            className={`px-4 py-2 text-sm ${
+            className={`admin-tab ${
               activeTab === "rascunhos"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
             Rascunhos
           </button>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Button className="bg-terreiro-green hover:bg-terreiro-green/90">
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar
-          </Button>
-          <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
-        </div>
       </div>
 
       <div className="grid grid-cols-4 gap-4">
         {filteredMensagens.map((mensagem) => (
           <div key={mensagem.id} className="rounded-md border border-gray-200 p-4">
-            <div className="mb-4 text-center font-medium">{mensagem.titulo}</div>
+            <div className="mb-4 text-center admin-subtitle">{mensagem.titulo}</div>
             <div className="flex justify-between">
               <button>
                 <Edit size={18} className="text-gray-600" />

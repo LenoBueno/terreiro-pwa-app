@@ -5,13 +5,16 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Calendar, Clock, User, Check, X, Search } from "lucide-react"
+import { MoreHorizontal, Calendar, Clock, User, Check, X, Search, ArrowLeft, Plus } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AddButton } from "@/components/add-button"
+import { useRouter } from "next/navigation"
 
 export default function AdminLimpezaPage() {
   const [activeTab, setActiveTab] = useState("todas")
+  const [busca, setBusca] = useState("")
+  const router = useRouter()
 
   // Dados de exemplo
   const tarefas = [
@@ -60,27 +63,92 @@ export default function AdminLimpezaPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Gerenciamento de Limpeza</h1>
-        <p className="text-muted-foreground">Administre as tarefas de limpeza do terreiro.</p>
+        <h1 className="admin-title tracking-tight">Gerenciar Limpeza</h1>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div className="relative w-72">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input type="search" placeholder="Buscar tarefas..." className="w-full pl-8" />
+      {/* Barra de pesquisa */}
+      <div className="relative w-full max-w-xs mb-4">
+        <Input
+          type="search"
+          placeholder="Procurar"
+          className="w-full"
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
+        />
+        {busca && (
+          <button onClick={() => setBusca("")} className="absolute right-2 top-1/2 -translate-y-1/2">
+            <X className="h-4 w-4 text-muted-foreground" />
+          </button>
+        )}
+      </div>
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        {/* Botões à esquerda e abas à direita */}
+        <div className="flex items-center gap-2 mb-2"> {/* gap e margem menores */}
+          <div className="flex items-center gap-1">
+            <Button variant="ghost" size="sm" className="admin-button" onClick={() => router.back()}>
+              <ArrowLeft className="mr-1 h-3 w-3" />
+              <span>Voltar</span>
+            </Button>
+            <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" size="sm">
+              <Plus className="mr-1 h-3 w-3" />
+              Adicionar
+            </Button>
+          </div>
+          <div className="flex border-b ml-2 h-7"> {/* abas compactas */}
+            <button
+              onClick={() => setActiveTab("todas")}
+              className={`admin-tab ${
+                activeTab === "todas"
+                  ? "border-b-2 border-terreiro-green text-terreiro-green"
+                  : "text-gray-600"
+              }`}
+            >
+              Todas
+            </button>
+            <button
+              onClick={() => setActiveTab("pendentes")}
+              className={`admin-tab ${
+                activeTab === "pendentes"
+                  ? "border-b-2 border-terreiro-green text-terreiro-green"
+                  : "text-gray-600"
+              }`}
+            >
+              Pendentes
+            </button>
+            <button
+              onClick={() => setActiveTab("concluidas")}
+              className={`admin-tab ${
+                activeTab === "concluidas"
+                  ? "border-b-2 border-terreiro-green text-terreiro-green"
+                  : "text-gray-600"
+              }`}
+            >
+              Concluídas
+            </button>
+            <button
+              onClick={() => setActiveTab("alta")}
+              className={`admin-tab ${
+                activeTab === "alta"
+                  ? "border-b-2 border-terreiro-green text-terreiro-green"
+                  : "text-gray-600"
+              }`}
+            >
+              Alta Prioridade
+            </button>
+            <button
+              onClick={() => setActiveTab("media")}
+              className={`admin-tab ${
+                activeTab === "media"
+                  ? "border-b-2 border-terreiro-green text-terreiro-green"
+                  : "text-gray-600"
+              }`}
+            >
+              Média Prioridade
+            </button>
+          </div>
         </div>
-        <AddButton>Nova Tarefa</AddButton>
-      </div>
-
-      <Tabs defaultValue="todas" onValueChange={setActiveTab}>
-        <TabsList className="mb-6">
-          <TabsTrigger value="todas">Todas</TabsTrigger>
-          <TabsTrigger value="pendentes">Pendentes</TabsTrigger>
-          <TabsTrigger value="concluidas">Concluídas</TabsTrigger>
-          <TabsTrigger value="alta">Alta Prioridade</TabsTrigger>
-          <TabsTrigger value="media">Média Prioridade</TabsTrigger>
-        </TabsList>
-
+        {/* Conteúdo das abas */}
         <TabsContent value={activeTab}>
           <div className="space-y-4">
             {tarefasFiltradas.map((tarefa) => (
@@ -89,7 +157,7 @@ export default function AdminLimpezaPage() {
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-xl font-semibold">{tarefa.titulo}</h3>
+                        <h3 className="admin-subtitle">{tarefa.titulo}</h3>
                         {tarefa.status === "pendente" ? (
                           <Badge className="bg-yellow-500">Pendente</Badge>
                         ) : (
@@ -130,11 +198,11 @@ export default function AdminLimpezaPage() {
                   <div className="flex justify-between items-center">
                     <div className="flex gap-2">
                       {tarefa.status === "pendente" ? (
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700">
+                        <Button size="sm" className="admin-button bg-green-600 hover:bg-green-700">
                           <Check className="mr-1 h-4 w-4" /> Marcar como Concluída
                         </Button>
                       ) : (
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" className="admin-button">
                           <X className="mr-1 h-4 w-4" /> Marcar como Pendente
                         </Button>
                       )}

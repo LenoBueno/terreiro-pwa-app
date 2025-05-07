@@ -103,3 +103,17 @@
     -webkit-touch-callout: none;
   }
 }
+
+/* Admin utility classes */
+.admin-title {
+  @apply text-2xl font-bold;
+}
+.admin-subtitle {
+  @apply text-lg font-semibold;
+}
+.admin-button {
+  @apply text-xs px-2 py-1 h-7 rounded font-medium;
+}
+.admin-tab {
+  @apply text-xs px-2 py-1 h-7 font-medium;
+}

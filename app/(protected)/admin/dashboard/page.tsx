@@ -6,14 +6,14 @@ export default function AdminDashboardPage() {
   return (
     <div className="container mx-auto p-4 md:p-6">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Painel Administrativo</h1>
-        <p className="text-muted-foreground">Bem-vindo ao painel administrativo do terreiro.</p>
+        <h1 className="admin-title tracking-tight">Painel Administrativo</h1>
+        <p className="text-muted-foreground text-xs">Bem-vindo ao painel administrativo do terreiro.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Total de Membros</CardTitle>
+            <CardTitle className="admin-subtitle">Total de Membros</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">127</div>
@@ -22,7 +22,7 @@ export default function AdminDashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Eventos Agendados</CardTitle>
+            <CardTitle className="admin-subtitle">Eventos Agendados</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">12</div>
@@ -31,7 +31,7 @@ export default function AdminDashboardPage() {
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium">Mensagens Enviadas</CardTitle>
+            <CardTitle className="admin-subtitle">Mensagens Enviadas</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">48</div>
@@ -46,8 +46,8 @@ export default function AdminDashboardPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <User className="h-8 w-8 text-terreiro-green" />
               <div>
-                <CardTitle>Frentes</CardTitle>
-                <CardDescription>Gerenciar frentes espirituais</CardDescription>
+                <CardTitle className="admin-subtitle">Frentes</CardTitle>
+                <CardDescription className="text-xs">Gerenciar frentes espirituais</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -61,8 +61,8 @@ export default function AdminDashboardPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <Calendar className="h-8 w-8 text-terreiro-green" />
               <div>
-                <CardTitle>Eventos</CardTitle>
-                <CardDescription>Gerenciar eventos</CardDescription>
+                <CardTitle className="admin-subtitle">Eventos</CardTitle>
+                <CardDescription className="text-xs">Gerenciar eventos</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -76,8 +76,8 @@ export default function AdminDashboardPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <MessageSquare className="h-8 w-8 text-terreiro-green" />
               <div>
-                <CardTitle>Mensagens</CardTitle>
-                <CardDescription>Gerenciar comunicados</CardDescription>
+                <CardTitle className="admin-subtitle">Mensagens</CardTitle>
+                <CardDescription className="text-xs">Gerenciar comunicados</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -91,8 +91,8 @@ export default function AdminDashboardPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <Broom className="h-8 w-8 text-terreiro-green" />
               <div>
-                <CardTitle>Limpeza</CardTitle>
-                <CardDescription>Gerenciar escalas</CardDescription>
+                <CardTitle className="admin-subtitle">Limpeza</CardTitle>
+                <CardDescription className="text-xs">Gerenciar escalas</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -106,8 +106,8 @@ export default function AdminDashboardPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <Leaf className="h-8 w-8 text-terreiro-green" />
               <div>
-                <CardTitle>Ervas</CardTitle>
-                <CardDescription>Gerenciar catálogo</CardDescription>
+                <CardTitle className="admin-subtitle">Ervas</CardTitle>
+                <CardDescription className="text-xs">Gerenciar catálogo</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -121,8 +121,8 @@ export default function AdminDashboardPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <User className="h-8 w-8 text-terreiro-green" />
               <div>
-                <CardTitle>Usuários</CardTitle>
-                <CardDescription>Gerenciar membros</CardDescription>
+                <CardTitle className="admin-subtitle">Usuários</CardTitle>
+                <CardDescription className="text-xs">Gerenciar membros</CardDescription>
               </div>
             </CardHeader>
             <CardContent>
@@ -136,8 +136,8 @@ export default function AdminDashboardPage() {
             <CardHeader className="flex flex-row items-center gap-4">
               <BarChart className="h-8 w-8 text-terreiro-green" />
               <div>
-                <CardTitle>Relatórios</CardTitle>
-                <CardDescription>Estatísticas e análises</CardDescription>
+                <CardTitle className="admin-subtitle">Relatórios</CardTitle>
+                <CardDescription className="text-xs">Estatísticas e análises</CardDescription>
               </div>
             </CardHeader>
             <CardContent>

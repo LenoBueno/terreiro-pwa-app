@@ -15,9 +15,10 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle2, Edit, Plus, Search, Trash } from "lucide-react"
+import { CheckCircle2, Edit, Plus, Search, Trash, X, ArrowLeft } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { useRouter } from "next/navigation"
 
 // Dados simulados de compras
 const comprasIniciais = [
@@ -98,6 +99,9 @@ export default function AdminComprasPage() {
   const [compraEditando, setCompraEditando] = useState<any>(null)
   const [dialogOpen, setDialogOpen] = useState(false)
   const [dialogEditOpen, setDialogEditOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const [activeTab, setActiveTab] = useState("todos")
+  const router = useRouter()
 
   // Filtrar compras
   const comprasFiltradas = compras
@@ -217,7 +221,7 @@ export default function AdminComprasPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Gerenciamento de Compras</h2>
+        <h2 className="text-2xl font-bold tracking-tight">Gerenciar Compras</h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button className="w-full sm:w-auto bg-terreiro-green hover:bg-terreiro-green/90">
@@ -320,6 +324,68 @@ export default function AdminComprasPage() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* Barra de pesquisa */}
+      <div className="relative w-full max-w-xs mb-4">
+        <Input
+          type="search"
+          placeholder="Procurar"
+          className="w-full"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        {searchTerm && (
+          <button onClick={() => setSearchTerm("")} className="absolute right-2 top-1/2 -translate-y-1/2">
+            <X className="h-4 w-4 text-muted-foreground" />
+          </button>
+        )}
+      </div>
+
+      {/* Botões à esquerda e abas à direita */}
+      <div className="flex items-center gap-4 mb-4">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" onClick={() => router.back()}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar
+          </Button>
+          <Button className="bg-terreiro-green hover:bg-terreiro-green/90">
+            <Plus className="mr-2 h-4 w-4" />
+            Adicionar
+          </Button>
+        </div>
+        <div className="flex border-b ml-4">
+          <button
+            onClick={() => setActiveTab("todos")}
+            className={`px-4 py-2 text-sm ${
+              activeTab === "todos"
+                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setActiveTab("pendentes")}
+            className={`px-4 py-2 text-sm ${
+              activeTab === "pendentes"
+                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Pendentes
+          </button>
+          <button
+            onClick={() => setActiveTab("concluidas")}
+            className={`px-4 py-2 text-sm ${
+              activeTab === "concluidas"
+                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Concluídas
+          </button>
+        </div>
       </div>
 
       <div className="mb-4">

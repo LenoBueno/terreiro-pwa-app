@@ -8,7 +8,7 @@ export default function LimpezaLayout({
 }) {
   return (
     <div className="min-h-screen bg-gray-50 p-4">
-      <div className="flex gap-4">
+      <div className="flex gap-8">
         <AppSidebar />
         <div className="flex-1 bg-white rounded-lg p-6">{children}</div>
       </div>

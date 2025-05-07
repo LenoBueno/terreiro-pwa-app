@@ -159,14 +159,14 @@ export default function AdminChatPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight">Chat</h2>
-        <p className="text-muted-foreground">Gerencie as conversas com os membros do terreiro.</p>
+        <h2 className="admin-title tracking-tight">Chat</h2>
+        <p className="text-muted-foreground text-xs">Gerencie as conversas com os membros do terreiro.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-1">
           <CardHeader>
-            <CardTitle>Conversas</CardTitle>
+            <CardTitle className="admin-subtitle">Conversas</CardTitle>
             <div className="mt-2">
               <Input placeholder="Buscar usuário..." value={busca} onChange={(e) => setBusca(e.target.value)} />
             </div>
@@ -207,7 +207,7 @@ export default function AdminChatPage() {
 
         <Card className="md:col-span-2">
           <CardHeader className="border-b">
-            <CardTitle>
+            <CardTitle className="admin-subtitle">
               {conversaAtual !== null ? (
                 <div className="flex items-center gap-3">
                   <Avatar className="h-8 w-8">
@@ -257,7 +257,7 @@ export default function AdminChatPage() {
                         }
                       }}
                     />
-                    <Button className="bg-terreiro-green hover:bg-terreiro-green/90" onClick={enviarMensagem}>
+                    <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={enviarMensagem}>
                       <Send className="h-4 w-4" />
                     </Button>
                   </div>
