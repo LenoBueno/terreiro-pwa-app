@@ -1,4 +1,3 @@
-
 "use client"
 
 import type React from "react"
@@ -11,7 +10,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Leaf } from "lucide-react"
-import { toast } from "@/components/ui/use-toast"
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -23,26 +21,11 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
-    // Validações básicas
-    if (password !== confirmPassword) {
-      toast({
-        title: "Erro",
-        description: "As senhas não conferem",
-        variant: "destructive",
-      })
-      return
-    }
-    
     setIsLoading(true)
 
     // Simulate registration - in a real app, this would call your auth API
     setTimeout(() => {
       setIsLoading(false)
-      toast({
-        title: "Conta criada",
-        description: "Sua conta foi criada com sucesso!",
-      })
       router.push("/login")
     }, 1000)
   }
