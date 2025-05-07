@@ -223,12 +223,6 @@ export default function AdminComprasPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-2xl font-bold tracking-tight">Gerenciar Compras</h2>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="w-full sm:w-auto bg-terreiro-green hover:bg-terreiro-green/90">
-              <Plus className="mr-2 h-4 w-4" />
-              Nova Compra
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-md">
             <DialogHeader>
               <DialogTitle>Adicionar Nova Compra</DialogTitle>
@@ -349,10 +343,6 @@ export default function AdminComprasPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <Button className="bg-terreiro-green hover:bg-terreiro-green/90">
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar
-          </Button>
         </div>
         <div className="flex border-b ml-4">
           <button
@@ -389,7 +379,7 @@ export default function AdminComprasPage() {
       </div>
 
       <div className="mb-4">
-        <p className="text-muted-foreground mb-4">Gerencie as compras e aquisições do terreiro.</p>
+        <p className="text-sm text-muted-foreground mb-4">Gerencie as compras e aquisições do terreiro.</p>
 
         <div className="mb-4">
           <div className="relative">
