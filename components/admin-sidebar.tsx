@@ -102,9 +102,9 @@ export function AdminSidebar() {
         <SidebarItem href="/admin/users" icon={<Users size={16} />} active={isActive("/admin/users")}>
           Usuários
         </SidebarItem>
-        <SidebarItem href="/admin/reports" icon={<FileBarChart size={16} />} active={isActive("/admin/reports")}>
-          Relatórios
-        </SidebarItem>
+        {/* <SidebarItem href="/admin/reports" icon={<FileBarChart size={16} />} active={isActive("/admin/reports")}> */}
+        {/*   Relatórios */}
+        {/* </SidebarItem> */}
       </nav>
 
       <div className="mt-auto pt-4 flex items-center gap-2">

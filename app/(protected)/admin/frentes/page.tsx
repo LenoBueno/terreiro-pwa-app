@@ -5,6 +5,7 @@ import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import { Card, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 
 // Dados simulados de frentes espirituais
 const frentesIniciais = [
@@ -98,22 +99,24 @@ export default function AdminFrentesPage() {
           >
             Nação
           </button>
-        </div>
+        </div>  
       </div>
 
       <div className="grid grid-cols-4 gap-4">
         {frentesFiltradas.map((frente) => (
-          <div key={frente.id} className="rounded-md border border-gray-200 p-4">
-            <div className="mb-4 text-center admin-subtitle">{frente.nome}</div>
-            <div className="flex justify-between">
+          <Card key={frente.id}>
+            <CardHeader className="mb-4 text-center">
+              <CardTitle className="admin-subtitle">{frente.nome}</CardTitle>
+            </CardHeader>
+            <CardFooter className="flex justify-between">
               <button>
                 <Edit size={18} className="text-gray-600" />
               </button>
               <button onClick={() => excluirFrente(frente.id)}>
                 <Trash2 size={18} className="text-red-500" />
               </button>
-            </div>
-          </div>
+            </CardFooter>
+          </Card>
         ))}
       </div>
     </div>

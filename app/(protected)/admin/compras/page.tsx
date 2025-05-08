@@ -220,270 +220,245 @@ export default function AdminComprasPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-2xl font-bold tracking-tight">Gerenciar Compras</h2>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Adicionar Nova Compra</DialogTitle>
-              <DialogDescription>Preencha os dados para adicionar uma nova compra.</DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div className="space-y-2">
-                <Label htmlFor="item">Item</Label>
-                <Input
-                  id="item"
-                  placeholder="Ex: Velas brancas"
-                  value={novaCompra.item}
-                  onChange={(e) => setNovaCompra({ ...novaCompra, item: e.target.value })}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="quantidade">Quantidade</Label>
-                  <Input
-                    id="quantidade"
-                    type="number"
-                    min="1"
-                    value={novaCompra.quantidade || ""}
-                    onChange={(e) =>
-                      setNovaCompra({ ...novaCompra, quantidade: Number.parseFloat(e.target.value) || 0 })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="unidade">Unidade</Label>
-                  <Select
-                    value={novaCompra.unidade}
-                    onValueChange={(value) => setNovaCompra({ ...novaCompra, unidade: value })}
-                  >
-                    <SelectTrigger id="unidade">
-                      <SelectValue placeholder="Selecione a unidade" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="unidade">Unidade</SelectItem>
-                      <SelectItem value="kg">Kg</SelectItem>
-                      <SelectItem value="litro">Litro</SelectItem>
-                      <SelectItem value="pacote">Pacote</SelectItem>
-                      <SelectItem value="kit">Kit</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="preco">Preço Unitário (R$)</Label>
-                <Input
-                  id="preco"
-                  type="number"
-                  min="0.01"
-                  step="0.01"
-                  value={novaCompra.preco || ""}
-                  onChange={(e) => setNovaCompra({ ...novaCompra, preco: Number.parseFloat(e.target.value) || 0 })}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="categoria">Categoria</Label>
-                <Select
-                  value={novaCompra.categoria}
-                  onValueChange={(value) => setNovaCompra({ ...novaCompra, categoria: value })}
-                >
-                  <SelectTrigger id="categoria">
-                    <SelectValue placeholder="Selecione a categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ritual">Ritual</SelectItem>
-                    <SelectItem value="ervas">Ervas</SelectItem>
-                    <SelectItem value="limpeza">Limpeza</SelectItem>
-                    <SelectItem value="alimentacao">Alimentação</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="responsavel">Responsável</Label>
-                <Input
-                  id="responsavel"
-                  placeholder="Nome do responsável"
-                  value={novaCompra.responsavel}
-                  onChange={(e) => setNovaCompra({ ...novaCompra, responsavel: e.target.value })}
-                />
-              </div>
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button className="bg-terreiro-green hover:bg-terreiro-green/90" onClick={adicionarCompra}>
-                Adicionar
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+      <div>
+        <h2 className="admin-title tracking-tight">Gerenciar Compras</h2>
       </div>
 
-      {/* Barra de pesquisa */}
+      {/* Barra de pesquisa padrão */}
       <div className="relative w-full max-w-xs mb-4">
         <Input
           type="search"
           placeholder="Procurar"
           className="w-full"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          value={busca}
+          onChange={(e) => setBusca(e.target.value)}
         />
-        {searchTerm && (
-          <button onClick={() => setSearchTerm("")} className="absolute right-2 top-1/2 -translate-y-1/2">
+        {busca && (
+          <button onClick={() => setBusca("")} className="absolute right-2 top-1/2 -translate-y-1/2">
             <X className="h-4 w-4 text-muted-foreground" />
           </button>
         )}
       </div>
 
-      {/* Botões à esquerda e abas à direita */}
+      {/* Botões à esquerda e abas à direita, padrão admin */}
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" onClick={() => router.back()}>
+          <Button variant="ghost" className="admin-button" onClick={() => router.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
+          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90 text-white">
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Adicionar Nova Compra</DialogTitle>
+                <DialogDescription>Preencha os dados da nova compra.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="item">Item</Label>
+                  <Input
+                    id="item"
+                    value={novaCompra.item}
+                    onChange={(e) => setNovaCompra({ ...novaCompra, item: e.target.value })}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="quantidade">Quantidade</Label>
+                    <Input
+                      id="quantidade"
+                      type="number"
+                      min="1"
+                      value={novaCompra.quantidade}
+                      onChange={(e) =>
+                        setNovaCompra({ ...novaCompra, quantidade: Number.parseFloat(e.target.value) || 0 })
+                      }
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="unidade">Unidade</Label>
+                    <Select
+                      value={novaCompra.unidade}
+                      onValueChange={(value) => setNovaCompra({ ...novaCompra, unidade: value })}
+                    >
+                      <SelectTrigger id="unidade">
+                        <SelectValue placeholder="Selecione a unidade" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="unidade">Unidade</SelectItem>
+                        <SelectItem value="kg">Kg</SelectItem>
+                        <SelectItem value="litro">Litro</SelectItem>
+                        <SelectItem value="pacote">Pacote</SelectItem>
+                        <SelectItem value="kit">Kit</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="preco">Preço Unitário (R$)</Label>
+                  <Input
+                    id="preco"
+                    type="number"
+                    min="0.01"
+                    step="0.01"
+                    value={novaCompra.preco}
+                    onChange={(e) =>
+                      setNovaCompra({ ...novaCompra, preco: Number.parseFloat(e.target.value) || 0 })
+                    }
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="categoria">Categoria</Label>
+                  <Select
+                    value={novaCompra.categoria}
+                    onValueChange={(value) => setNovaCompra({ ...novaCompra, categoria: value })}
+                  >
+                    <SelectTrigger id="categoria">
+                      <SelectValue placeholder="Selecione a categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ritual">Ritual</SelectItem>
+                      <SelectItem value="ervas">Ervas</SelectItem>
+                      <SelectItem value="limpeza">Limpeza</SelectItem>
+                      <SelectItem value="alimentacao">Alimentação</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="responsavel">Responsável</Label>
+                  <Input
+                    id="responsavel"
+                    value={novaCompra.responsavel}
+                    onChange={(e) => setNovaCompra({ ...novaCompra, responsavel: e.target.value })}
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button className="bg-terreiro-green hover:bg-terreiro-green/90" onClick={adicionarCompra}>
+                  Adicionar
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="flex border-b ml-4">
           <button
-            onClick={() => setActiveTab("todos")}
-            className={`px-4 py-2 text-sm ${
-              activeTab === "todos"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+            onClick={() => setFiltro("todos")}
+            className={`admin-tab ${
+              filtro === "todos"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
             Todos
           </button>
           <button
-            onClick={() => setActiveTab("pendentes")}
-            className={`px-4 py-2 text-sm ${
-              activeTab === "pendentes"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+            onClick={() => setFiltro("pendentes")}
+            className={`admin-tab ${
+              filtro === "pendentes"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
             Pendentes
           </button>
           <button
-            onClick={() => setActiveTab("concluidas")}
-            className={`px-4 py-2 text-sm ${
-              activeTab === "concluidas"
-                ? "border-b-2 border-terreiro-green font-medium text-terreiro-green"
+            onClick={() => setFiltro("concluidas")}
+            className={`admin-tab ${
+              filtro === "concluidas"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
                 : "text-gray-600"
             }`}
           >
-            Concluídas
+            Concluídos
           </button>
         </div>
       </div>
 
-      <div className="mb-4">
-        <p className="text-sm text-muted-foreground mb-4">Gerencie as compras e aquisições do terreiro.</p>
-
-        <div className="mb-4">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Buscar compras..."
-              className="w-full pl-8"
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <Tabs defaultValue="todos" className="mb-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="todos" onClick={() => setFiltro("todos")}>
-              Todas
-            </TabsTrigger>
-            <TabsTrigger value="pendentes" onClick={() => setFiltro("pendentes")}>
-              Pendentes
-            </TabsTrigger>
-            <TabsTrigger value="concluidas" onClick={() => setFiltro("concluidas")}>
-              Concluídas
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Item</TableHead>
-                <TableHead>Quantidade</TableHead>
-                <TableHead>Preço Unit.</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Categoria</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {comprasFiltradas.map((compra) => (
-                <TableRow key={compra.id} className={compra.status === "concluida" ? "opacity-70" : ""}>
-                  <TableCell className="font-medium">{compra.item}</TableCell>
-                  <TableCell>
-                    {compra.quantidade} {compra.unidade}
-                  </TableCell>
-                  <TableCell>R$ {compra.preco.toFixed(2)}</TableCell>
-                  <TableCell>R$ {compra.total.toFixed(2)}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={getCategoriaBadge(compra.categoria)}>
-                      {compra.categoria === "ritual"
-                        ? "Ritual"
-                        : compra.categoria === "ervas"
-                          ? "Ervas"
-                          : compra.categoria === "limpeza"
-                            ? "Limpeza"
-                            : "Alimentação"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={compra.status === "pendente" ? "outline" : "default"}
-                      className={
-                        compra.status === "pendente" ? "bg-amber-600 text-white" : "bg-terreiro-green text-white"
-                      }
-                    >
-                      {compra.status === "pendente" ? "Pendente" : "Concluída"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end gap-2">
-                      <Button variant="ghost" size="icon" onClick={() => setCompraEditando(compra)}>
-                        <Edit className="h-4 w-4" />
-                        <span className="sr-only">Editar</span>
-                      </Button>
-                      {compra.status === "pendente" && (
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => marcarComoConcluida(compra.id)}
-                          className="text-terreiro-green"
-                        >
-                          <CheckCircle2 className="h-4 w-4" />
-                          <span className="sr-only">Concluir</span>
-                        </Button>
-                      )}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Item</TableHead>
+              <TableHead>Quantidade</TableHead>
+              <TableHead>Preço Unit.</TableHead>
+              <TableHead>Total</TableHead>
+              <TableHead>Categoria</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {comprasFiltradas.map((compra) => (
+              <TableRow key={compra.id} className={compra.status === "concluida" ? "opacity-70" : ""}>
+                <TableCell className="font-medium">{compra.item}</TableCell>
+                <TableCell>
+                  {compra.quantidade} {compra.unidade}
+                </TableCell>
+                <TableCell>R$ {compra.preco.toFixed(2)}</TableCell>
+                <TableCell>R$ {compra.total.toFixed(2)}</TableCell>
+                <TableCell>
+                  <Badge variant="outline" className={getCategoriaBadge(compra.categoria)}>
+                    {compra.categoria === "ritual"
+                      ? "Ritual"
+                      : compra.categoria === "ervas"
+                        ? "Ervas"
+                        : compra.categoria === "limpeza"
+                          ? "Limpeza"
+                          : "Alimentação"}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <Badge
+                    variant={compra.status === "pendente" ? "outline" : "default"}
+                    className={
+                      compra.status === "pendente" ? "bg-amber-600 text-white" : "bg-terreiro-green text-white"
+                    }
+                  >
+                    {compra.status === "pendente" ? "Pendente" : "Concluída"}
+                  </Badge>
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => setCompraEditando(compra)}>
+                      <Edit className="h-4 w-4" />
+                      <span className="sr-only">Editar</span>
+                    </Button>
+                    {compra.status === "pendente" && (
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => excluirCompra(compra.id)}
-                        className="text-terreiro-red"
+                        onClick={() => marcarComoConcluida(compra.id)}
+                        className="text-terreiro-green"
                       >
-                        <Trash className="h-4 w-4" />
-                        <span className="sr-only">Excluir</span>
+                        <CheckCircle2 className="h-4 w-4" />
+                        <span className="sr-only">Concluir</span>
                       </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => excluirCompra(compra.id)}
+                      className="text-terreiro-red"
+                    >
+                      <Trash className="h-4 w-4" />
+                      <span className="sr-only">Excluir</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
 
       <Dialog open={dialogEditOpen} onOpenChange={setDialogEditOpen}>
