@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState } from "react"
@@ -160,5 +161,65 @@ export default function AdminProfilePage() {
                 <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
                 <Input id="confirm-password" type="password" />
               </div>
-            \
-\
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full">Atualizar Senha</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="notifications">
+          <Card>
+            <CardHeader>
+              <CardTitle>Preferências de Notificação</CardTitle>
+              <CardDescription>Configure como deseja ser notificado</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Email</p>
+                    <p className="text-sm text-muted-foreground">Receba notificações por email</p>
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    checked={profile.notifications.email}
+                    onChange={(e) => setProfile({...profile, notifications: {...profile.notifications, email: e.target.checked}})}
+                    className="toggle"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">Push</p>
+                    <p className="text-sm text-muted-foreground">Receba notificações push</p>
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    checked={profile.notifications.push}
+                    onChange={(e) => setProfile({...profile, notifications: {...profile.notifications, push: e.target.checked}})}
+                    className="toggle"
+                  />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="font-medium">SMS</p>
+                    <p className="text-sm text-muted-foreground">Receba notificações por SMS</p>
+                  </div>
+                  <input 
+                    type="checkbox" 
+                    checked={profile.notifications.sms}
+                    onChange={(e) => setProfile({...profile, notifications: {...profile.notifications, sms: e.target.checked}})}
+                    className="toggle"
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter>
+              <Button className="w-full">Salvar Preferências</Button>
+            </CardFooter>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
