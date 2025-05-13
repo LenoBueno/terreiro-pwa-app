@@ -1,8 +1,12 @@
+"use client"
+
+import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Book, FileText, Download, Clock, Eye } from "lucide-react"
+import { Book, FileText, Download, Clock, Eye, ArrowLeft } from "lucide-react"
+import { UserPageHeader } from "@/components/user-page-header"
+import { useRouter } from "next/navigation"
 
 // Dados simulados de materiais de leitura
 const materiais = [
@@ -75,65 +79,96 @@ const materiais = [
 ]
 
 export default function LeituraPage() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [activeTab, setActiveTab] = useState("todos")
+  const router = useRouter()
+  
+  // Filtrar materiais por termo de busca
+  const materiaisFiltrados = materiais.filter(material => 
+    material.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    material.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    material.autor.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  // Filtrar materiais por categoria
+  const filteredByCategory = activeTab === "todos" 
+    ? materiaisFiltrados 
+    : materiaisFiltrados.filter(material => material.categoria === activeTab)
+
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Materiais de Leitura</h1>
-        <p className="text-muted-foreground">Acesse materiais de estudo e aprofundamento espiritual.</p>
+    <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
+      <UserPageHeader
+        title="Materiais de Leitura"
+        subtitle="Acesse materiais de estudo e aprofundamento espiritual."
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Buscar materiais..."
+      />
+
+      <div className="flex items-center gap-4 mb-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push('/user/dashboard')}>
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          <span>Voltar</span>
+        </Button>
+        <div className="flex border-b">
+          <button
+            onClick={() => setActiveTab("todos")}
+            className={`admin-tab ${
+              activeTab === "todos"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setActiveTab("fundamentos")}
+            className={`admin-tab ${
+              activeTab === "fundamentos"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Fundamentos
+          </button>
+          <button
+            onClick={() => setActiveTab("entidades")}
+            className={`admin-tab ${
+              activeTab === "entidades"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Entidades
+          </button>
+          <button
+            onClick={() => setActiveTab("praticas")}
+            className={`admin-tab ${
+              activeTab === "praticas"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Práticas
+          </button>
+          <button
+            onClick={() => setActiveTab("historia")}
+            className={`admin-tab ${
+              activeTab === "historia"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            História
+          </button>
+        </div>
       </div>
 
-      <Tabs defaultValue="todos" className="mb-8">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="todos">Todos</TabsTrigger>
-          <TabsTrigger value="fundamentos">Fundamentos</TabsTrigger>
-          <TabsTrigger value="entidades">Entidades</TabsTrigger>
-          <TabsTrigger value="praticas">Práticas</TabsTrigger>
-          <TabsTrigger value="historia">História</TabsTrigger>
-        </TabsList>
-        <TabsContent value="todos">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
-            {materiais.map((material) => (
-              <MaterialCard key={material.id} material={material} />
-            ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="fundamentos">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
-            {materiais
-              .filter((material) => material.categoria === "fundamentos")
-              .map((material) => (
-                <MaterialCard key={material.id} material={material} />
-              ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="entidades">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
-            {materiais
-              .filter((material) => material.categoria === "entidades")
-              .map((material) => (
-                <MaterialCard key={material.id} material={material} />
-              ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="praticas">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
-            {materiais
-              .filter((material) => material.categoria === "praticas")
-              .map((material) => (
-                <MaterialCard key={material.id} material={material} />
-              ))}
-          </div>
-        </TabsContent>
-        <TabsContent value="historia">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
-            {materiais
-              .filter((material) => material.categoria === "historia")
-              .map((material) => (
-                <MaterialCard key={material.id} material={material} />
-              ))}
-          </div>
-        </TabsContent>
-      </Tabs>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
+        {filteredByCategory.map((material) => (
+          <MaterialCard key={material.id} material={material} />
+        ))}
+      </div>
     </div>
   )
 }

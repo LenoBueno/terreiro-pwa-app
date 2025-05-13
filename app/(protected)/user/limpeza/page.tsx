@@ -5,8 +5,9 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Brush, Clock, Users, CheckCircle2 } from "lucide-react"
+import { Calendar, Brush as Broom, Clock, Users, CheckCircle2, ArrowLeft } from "lucide-react"
+import { UserPageHeader } from "@/components/user-page-header"
+import { useRouter } from "next/navigation"
 
 // Dados simulados de escalas de limpeza
 const escalas = [
@@ -23,71 +24,104 @@ const escalas = [
     tarefas: ["Varrer o salão", "Limpar os assentamentos", "Organizar as cadeiras"],
     status: "pendente",
   },
-
 ]
 
 export default function LimpezaPage() {
   const [escalasState, setEscalasState] = useState(escalas)
+  const [activeTab, setActiveTab] = useState("pendentes")
+  const [searchTerm, setSearchTerm] = useState("")
+  const router = useRouter()
 
   // Marcar escala como concluída
   const marcarComoConcluida = (id: number) => {
     setEscalasState(escalasState.map((escala) => (escala.id === id ? { ...escala, status: "concluida" } : escala)))
   }
 
-  // Filtrar escalas por status
-  const escalasPendentes = escalasState.filter((escala) => escala.status === "pendente")
-  const escalasConcluidas = escalasState.filter((escala) => escala.status === "concluida")
+  // Filtrar escalas por status e termo de busca
+  const escalasFiltradas = escalasState.filter(escala => 
+    escala.area.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    escala.tarefas.some(tarefa => tarefa.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    escala.responsaveis.some(resp => resp.nome.toLowerCase().includes(searchTerm.toLowerCase()))
+  )
+  
+  const escalasPendentes = escalasFiltradas.filter((escala) => escala.status === "pendente")
+  const escalasConcluidas = escalasFiltradas.filter((escala) => escala.status === "concluida")
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Escalas de Limpeza</h1>
-        <p className="text-muted-foreground">Acompanhe as escalas de limpeza e organização do terreiro.</p>
+    <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
+      <UserPageHeader
+        title="Escalas de Limpeza"
+        subtitle="Acompanhe as escalas de limpeza e organização do terreiro."
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Buscar escalas..."
+      />
+
+      <div className="flex items-center gap-4 mb-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push('/user/dashboard')}>
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          <span>Voltar</span>
+        </Button>
+        <div className="flex border-b">
+          <button
+            onClick={() => setActiveTab("pendentes")}
+            className={`admin-tab ${
+              activeTab === "pendentes"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Pendentes
+          </button>
+          <button
+            onClick={() => setActiveTab("concluidas")}
+            className={`admin-tab ${
+              activeTab === "concluidas"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Concluídas
+          </button>
+        </div>
       </div>
 
-      <Tabs defaultValue="pendentes" className="mb-8">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="pendentes">Pendentes</TabsTrigger>
-          <TabsTrigger value="concluidas">Concluídas</TabsTrigger>
-        </TabsList>
-        <TabsContent value="pendentes">
-          <div className="space-y-4 mt-6">
-            {escalasPendentes.length > 0 ? (
-              escalasPendentes.map((escala) => (
-                <EscalaCard key={escala.id} escala={escala} onConcluir={marcarComoConcluida} />
-              ))
-            ) : (
-              <div className="text-center py-8">
-                <Brush className="mx-auto h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-medium">Nenhuma escala pendente</h3>
-                <p className="text-muted-foreground">Todas as escalas foram concluídas.</p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-        <TabsContent value="concluidas">
-          <div className="space-y-4 mt-6">
-            {escalasConcluidas.length > 0 ? (
-              escalasConcluidas.map((escala) => (
-                <EscalaCard key={escala.id} escala={escala} onConcluir={marcarComoConcluida} />
-              ))
-            ) : (
-              <div className="text-center py-8">
-                <CheckCircle2 className="mx-auto h-12 w-12 text-muted-foreground" />
-                <h3 className="mt-4 text-lg font-medium">Nenhuma escala concluída</h3>
-                <p className="text-muted-foreground">As escalas ainda estão pendentes.</p>
-              </div>
-            )}
-          </div>
-        </TabsContent>
-      </Tabs>
+      {activeTab === "pendentes" ? (
+        <div className="space-y-4">
+          {escalasPendentes.length > 0 ? (
+            escalasPendentes.map((escala) => (
+              <EscalaCard key={escala.id} escala={escala} onConcluir={marcarComoConcluida} />
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <Broom className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-medium">Nenhuma escala pendente</h3>
+              <p className="text-muted-foreground">Todas as escalas foram concluídas.</p>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {escalasConcluidas.length > 0 ? (
+            escalasConcluidas.map((escala) => (
+              <EscalaCard key={escala.id} escala={escala} onConcluir={marcarComoConcluida} />
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <CheckCircle2 className="mx-auto h-12 w-12 text-muted-foreground" />
+              <h3 className="mt-4 text-lg font-medium">Nenhuma escala concluída</h3>
+              <p className="text-muted-foreground">As escalas ainda estão pendentes.</p>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }
 
 function EscalaCard({ escala, onConcluir }: { escala: any; onConcluir: (id: number) => void }) {
   return (
-    <Card className="w-[500px] h-[500px]">
+    <Card className="w-full">
       <CardHeader>
         <div className="flex items-start justify-between">
           <CardTitle className="text-xl">Limpeza: {escala.area}</CardTitle>

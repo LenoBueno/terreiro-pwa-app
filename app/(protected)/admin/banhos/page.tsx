@@ -5,6 +5,7 @@ import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import {
   Table,
   TableHeader,
@@ -67,6 +68,11 @@ export default function AdminBanhosPage() {
     setEditBanho(null)
   }
 
+  const handleBack = () => {
+    console.log("Navigating to admin dashboard");
+    router.push("/admin/dashboard");
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-1">Gerenciar Banhos</h1>
@@ -88,10 +94,12 @@ export default function AdminBanhosPage() {
       {/* Botões à esquerda e abas à direita */}
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" className="admin-button" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
+          <Link href="/admin/dashboard">
+            <Button variant="ghost" className="admin-button">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+          </Link>
           <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={handleAdd}>
             <Plus className="mr-2 h-4 w-4" />
             Adicionar

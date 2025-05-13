@@ -9,7 +9,7 @@ interface FormFrenteProps {
     titulo: string;
     subtitulo: string;
     descricao: string;
-    papel: string;
+    cores: string;
     imagem: File | null;
     categoria: string;
   }) => void;
@@ -18,7 +18,7 @@ interface FormFrenteProps {
     titulo?: string;
     subtitulo?: string;
     descricao?: string;
-    papel?: string;
+    cores?: string;
     imagem?: File | null;
     categoria?: string;
   };

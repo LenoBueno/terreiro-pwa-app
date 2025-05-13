@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { AddButton } from "@/components/add-button"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export default function AdminLimpezaPage() {
   const [activeTab, setActiveTab] = useState("todas")
@@ -50,6 +51,11 @@ export default function AdminLimpezaPage() {
     return false
   })
 
+  const handleBack = () => {
+    console.log("Navigating to admin dashboard");
+    router.push("/admin/dashboard");
+  };
+
   return (
     <div>
       <h1 className="text-2xl font-bold mb-1">Gerenciar Limpeza</h1>
@@ -72,10 +78,12 @@ export default function AdminLimpezaPage() {
         {/* Botões à esquerda e abas à direita */}
         <div className="flex items-center gap-2 mb-2"> {/* gap e margem menores */}
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="sm" className="admin-button" onClick={() => router.back()}>
-              <ArrowLeft className="mr-1 h-3 w-3" />
-              <span>Voltar</span>
-            </Button>
+            <Link href="/admin/dashboard">
+              <Button variant="ghost" size="sm" className="admin-button">
+                <ArrowLeft className="mr-1 h-3 w-3" />
+                <span>Voltar</span>
+              </Button>
+            </Link>
             <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" size="sm">
               <Plus className="mr-1 h-3 w-3" />
               Adicionar

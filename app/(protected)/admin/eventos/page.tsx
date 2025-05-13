@@ -15,6 +15,7 @@ import {
 import FormEventos from "./FormEventos"
 import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 // Dados simulados iniciais
 const eventosMock = [
@@ -47,6 +48,11 @@ export default function AdminEventosPage() {
       (evento.subtitulo && evento.subtitulo.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
+  const handleBack = () => {
+    console.log("Navigating to admin dashboard");
+    router.push("/admin/dashboard");
+  };
+
   return (
     <div className="w-full bg-white flex flex-col pt-2 pb-[132px]" style={{ minHeight: '500px' }}>
       <h1 className="text-2xl font-bold mb-1">Gerenciar Eventos</h1>
@@ -70,10 +76,12 @@ export default function AdminEventosPage() {
       {/* Botões à esquerda e abas à direita */}
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" className="admin-button" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
+          <Link href="/admin/dashboard">
+            <Button variant="ghost" className="admin-button">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+          </Link>
           <Dialog open={openDialog} onOpenChange={setOpenDialog}>
             <DialogTrigger asChild>
               <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={() => { setEventoEdit(null); setOpenDialog(true); }}>

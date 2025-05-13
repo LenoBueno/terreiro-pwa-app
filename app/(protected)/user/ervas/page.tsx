@@ -4,9 +4,9 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Leaf, Search, Tag, Info, Droplets } from "lucide-react"
+import { Leaf, Tag, Info, Droplets, ArrowLeft } from "lucide-react"
+import { UserPageHeader } from "@/components/user-page-header"
+import { useRouter } from "next/navigation"
 
 // Dados simulados de ervas
 const ervas = [
@@ -24,45 +24,77 @@ const ervas = [
 ]
 
 export default function ErvasPage() {
-  const [busca, setBusca] = useState("")
+  const [searchTerm, setSearchTerm] = useState("")
   const [categoriaAtiva, setCategoriaAtiva] = useState("todas")
+  const router = useRouter()
 
   // Filtrar ervas por busca e categoria
   const ervasFiltradas = ervas.filter((erva) => {
     const matchBusca =
-      erva.nome.toLowerCase().includes(busca.toLowerCase()) ||
-      erva.descricao.toLowerCase().includes(busca.toLowerCase())
+      erva.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      erva.descricao.toLowerCase().includes(searchTerm.toLowerCase())
     const matchCategoria = categoriaAtiva === "todas" || erva.categoria === categoriaAtiva
     return matchBusca && matchCategoria
   })
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Catálogo de Ervas</h1>
-        <p className="text-muted-foreground">Explore o catálogo de ervas sagradas e suas propriedades.</p>
-      </div>
+    <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
+      <UserPageHeader
+        title="Catálogo de Ervas"
+        subtitle="Explore o catálogo de ervas sagradas e suas propriedades."
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Buscar ervas..."
+      />
 
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="relative flex-grow">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar ervas..."
-            className="pl-8"
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-          />
+      <div className="flex items-center gap-4 mb-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push('/user/dashboard')}>
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          <span>Voltar</span>
+        </Button>
+        <div className="flex border-b">
+          <button
+            onClick={() => setCategoriaAtiva("todas")}
+            className={`admin-tab ${
+              categoriaAtiva === "todas"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Todas
+          </button>
+          <button
+            onClick={() => setCategoriaAtiva("proteção")}
+            className={`admin-tab ${
+              categoriaAtiva === "proteção"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Proteção
+          </button>
+          <button
+            onClick={() => setCategoriaAtiva("prosperidade")}
+            className={`admin-tab ${
+              categoriaAtiva === "prosperidade"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Prosperidade
+          </button>
+          <button
+            onClick={() => setCategoriaAtiva("harmonia")}
+            className={`admin-tab ${
+              categoriaAtiva === "harmonia"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Harmonia
+          </button>
         </div>
       </div>
-
-      <Tabs defaultValue="todas" className="mb-8" onValueChange={setCategoriaAtiva}>
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="todas">Todas</TabsTrigger>
-          <TabsTrigger value="proteção">Proteção</TabsTrigger>
-          <TabsTrigger value="prosperidade">Prosperidade</TabsTrigger>
-          <TabsTrigger value="harmonia">Harmonia</TabsTrigger>
-        </TabsList>
-      </Tabs>
 
       {ervasFiltradas.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

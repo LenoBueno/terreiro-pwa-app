@@ -4,8 +4,9 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { CalendarIcon, Clock, MapPin, User, Users } from "lucide-react"
+import { CalendarIcon, Clock, MapPin, User, Users, ArrowLeft } from "lucide-react"
+import { UserPageHeader } from "@/components/user-page-header"
+import { useRouter } from "next/navigation"
 
 // Dados simulados de eventos
 const eventos = [
@@ -83,37 +84,88 @@ function getBadgeVariant(tipo: string) {
 }
 
 export default function EventosPage() {
-  const [filtro, setFiltro] = useState("todos")
+  const [activeTab, setActiveTab] = useState("todos")
+  const [searchTerm, setSearchTerm] = useState("")
+  const router = useRouter()
 
-  // Filtrar eventos baseado na tab selecionada
-  const eventosFiltrados = filtro === "todos" ? eventos : eventos.filter((evento) => evento.tipo === filtro)
+  // Filtrar eventos baseado na tab selecionada e termo de busca
+  const eventosFiltrados = eventos
+    .filter(evento => 
+      evento.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      evento.descricao.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      evento.responsavel.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      evento.local.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .filter(evento => activeTab === "todos" ? true : evento.tipo === activeTab)
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Eventos</h1>
-        <p className="text-muted-foreground">Calendário de eventos e atividades do terreiro.</p>
-      </div>
+    <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
+      <UserPageHeader
+        title="Eventos"
+        subtitle="Calendário de eventos e atividades do terreiro."
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Buscar eventos..."
+      />
 
-      <Tabs defaultValue="todos" className="mb-8">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="todos" onClick={() => setFiltro("todos")}>
+      <div className="flex items-center gap-4 mb-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push('/user/dashboard')}>
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          <span>Voltar</span>
+        </Button>
+        <div className="flex border-b">
+          <button
+            onClick={() => setActiveTab("todos")}
+            className={`admin-tab ${
+              activeTab === "todos"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
             Todos
-          </TabsTrigger>
-          <TabsTrigger value="ritual" onClick={() => setFiltro("ritual")}>
+          </button>
+          <button
+            onClick={() => setActiveTab("ritual")}
+            className={`admin-tab ${
+              activeTab === "ritual"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
             Rituais
-          </TabsTrigger>
-          <TabsTrigger value="estudo" onClick={() => setFiltro("estudo")}>
+          </button>
+          <button
+            onClick={() => setActiveTab("estudo")}
+            className={`admin-tab ${
+              activeTab === "estudo"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
             Estudos
-          </TabsTrigger>
-          <TabsTrigger value="celebracao" onClick={() => setFiltro("celebracao")}>
+          </button>
+          <button
+            onClick={() => setActiveTab("celebracao")}
+            className={`admin-tab ${
+              activeTab === "celebracao"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
             Celebrações
-          </TabsTrigger>
-          <TabsTrigger value="organizacao" onClick={() => setFiltro("organizacao")}>
+          </button>
+          <button
+            onClick={() => setActiveTab("organizacao")}
+            className={`admin-tab ${
+              activeTab === "organizacao"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
             Organização
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
+          </button>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
         {eventosFiltrados.map((evento) => (
@@ -135,26 +187,26 @@ export default function EventosPage() {
               </div>
             </CardHeader>
             <CardContent className="p-2">
-  <div className="flex items-center gap-1 mb-1">
-    <CalendarIcon className="h-5 w-5 text-terreiro-green" />
-    <span className="text-[10px] font-medium">{evento.data}</span>
-    <Clock className="h-5 w-5 text-terreiro-green" />
-    <span className="text-[10px] font-medium">{evento.horario}</span>
-  </div>
-  <CardDescription className="text-xs truncate max-w-full leading-tight mb-1" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'}}>{evento.descricao}</CardDescription>
-  <div className="flex items-center gap-1 mt-1">
-    <MapPin className="h-5 w-5 text-gray-500" />
-    <span className="text-[10px] truncate">{evento.local}</span>
-  </div>
-  <div className="flex items-center gap-1 mt-1">
-    <User className="h-5 w-5 text-gray-500" />
-    <span className="text-[10px] truncate">{evento.responsavel}</span>
-  </div>
-  <div className="flex items-center gap-1 mt-1">
-    <Users className="h-5 w-5 text-gray-500" />
-    <span className="text-[10px]">{evento.participantes} participantes</span>
-  </div>
-</CardContent>
+              <div className="flex items-center gap-1 mb-1">
+                <CalendarIcon className="h-5 w-5 text-terreiro-green" />
+                <span className="text-[10px] font-medium">{evento.data}</span>
+                <Clock className="h-5 w-5 text-terreiro-green" />
+                <span className="text-[10px] font-medium">{evento.horario}</span>
+              </div>
+              <CardDescription className="text-xs truncate max-w-full leading-tight mb-1" style={{display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden'}}>{evento.descricao}</CardDescription>
+              <div className="flex items-center gap-1 mt-1">
+                <MapPin className="h-5 w-5 text-gray-500" />
+                <span className="text-[10px] truncate">{evento.local}</span>
+              </div>
+              <div className="flex items-center gap-1 mt-1">
+                <User className="h-5 w-5 text-gray-500" />
+                <span className="text-[10px] truncate">{evento.responsavel}</span>
+              </div>
+              <div className="flex items-center gap-1 mt-1">
+                <Users className="h-5 w-5 text-gray-500" />
+                <span className="text-[10px]">{evento.participantes} participantes</span>
+              </div>
+            </CardContent>
           </Card>
         ))}
       </div>

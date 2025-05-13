@@ -16,7 +16,6 @@ export default function ProtectedLayout({
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 100,
         }}
       >
         <div className="flex w-full max-w-[1600px] gap-8">

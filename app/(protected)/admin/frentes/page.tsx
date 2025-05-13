@@ -5,6 +5,7 @@ import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 import FormFrente from './FormFrente'
 import {
@@ -46,11 +47,20 @@ export default function AdminFrentesPage() {
   const [filtro, setFiltro] = useState("umbanda")
   const [busca, setBusca] = useState("")
   const [showForm, setShowForm] = useState(false);
-  const [editFrente, setEditFrente] = useState<any>(null);
+  const [editFrente, setEditFrente] = useState<Frente | null>(null);
   const [showEditDialog, setShowEditDialog] = useState(false);
 
+  // Normaliza as frentes para garantir que todos os campos necessários existam
+  const frentesNormalizadas = frentes.map(frente => ({
+    ...frente,
+    titulo: frente.titulo || frente.nome,
+    subtitulo: frente.subtitulo || '',
+    descricao: frente.descricao || '',
+    cores: frente.cores || ''
+  }));
+  
   // Ordena as frentes por nome (alfabético)
-  const frentesOrdenadas = [...frentes].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
+  const frentesOrdenadas = [...frentesNormalizadas].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   // Filtrar frentes
   const frentesFiltradas = frentesOrdenadas
     .filter((frente) => frente.tipo === filtro)
@@ -72,9 +82,11 @@ export default function AdminFrentesPage() {
     const novaFrente = {
       id: Date.now(),
       nome: data.titulo,
+      titulo: data.titulo,
       subtitulo: data.subtitulo || 'Subtítulo padrão',
       descricao: data.descricao || 'Descrição padrão da frente.',
       papel: data.papel || 'Papel padrão',
+      cores: data.cores || '',
       tipo: data.categoria,
       imagem: data.imagem,
     };
@@ -85,12 +97,14 @@ export default function AdminFrentesPage() {
 
   function handleEditFrenteSave(data: any) {
     setFrentes(frentes => {
-      const atualizadas = frentes.map(f => f.id === editFrente.id ? {
+      const atualizadas = frentes.map(f => f.id === editFrente?.id ? {
         ...f,
         nome: data.titulo,
+        titulo: data.titulo,
         subtitulo: data.subtitulo,
         descricao: data.descricao,
         papel: data.papel,
+        cores: data.cores,
         imagem: data.imagem || f.imagem,
         tipo: data.categoria,
       } : f);
@@ -100,6 +114,19 @@ export default function AdminFrentesPage() {
     setShowEditDialog(false);
     setEditFrente(null);
   }
+
+  const handleBack = () => {
+    console.log("Trying to navigate to admin dashboard");
+    
+    // Try a different route structure
+    router.push("/");
+    
+    // Fallback options to try
+    setTimeout(() => {
+      console.log("Trying fallback navigation");
+      router.push("/admin");
+    }, 1000);
+  };
 
   return (
     <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
@@ -124,13 +151,15 @@ export default function AdminFrentesPage() {
       {/* Botões à esquerda e abas à direita */}
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" className="admin-button" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Voltar
-          </Button>
+          <Link href="/admin/dashboard">
+            <Button variant="ghost" className="admin-button">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Voltar
+            </Button>
+          </Link>
           <Dialog open={showForm} onOpenChange={setShowForm}>
             <DialogTrigger asChild>
-              <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
+              <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={() => setShowForm(true)}>
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar
               </Button>
@@ -192,10 +221,10 @@ export default function AdminFrentesPage() {
                     <span className="text-gray-400 text-xl">📷</span>
                   )}
                 </TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.titulo}</TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.subtitulo}</TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.descricao}</TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.cores}</TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.titulo || frente.nome}</TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.subtitulo || '-'}</TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.descricao || '-'}</TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.cores || '-'}</TableCell>
                 <TableCell className="text-center align-middle px-4">
                   <div className="inline-flex justify-center gap-2 items-center">
                     <Button variant="ghost" size="icon" onClick={() => { setEditFrente(frente); setShowEditDialog(true); }}>
@@ -219,12 +248,12 @@ export default function AdminFrentesPage() {
           {editFrente && (
             <FormFrente
               initialData={{
-                titulo: editFrente.nome,
-                subtitulo: editFrente.subtitulo,
-                descricao: editFrente.descricao,
-                papel: editFrente.papel,
-                imagem: editFrente.imagem,
-                categoria: editFrente.tipo,
+                titulo: editFrente.titulo || editFrente.nome,
+                subtitulo: editFrente.subtitulo || '',
+                descricao: editFrente.descricao || '',
+                cores: editFrente.cores || '',
+                imagem: editFrente.imagem || null,
+                categoria: editFrente.tipo || 'umbanda',
               }}
               onSubmit={handleEditFrenteSave}
               onCancel={() => setShowEditDialog(false)}

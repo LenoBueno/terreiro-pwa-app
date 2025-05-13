@@ -4,9 +4,9 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Droplets, Search, Leaf, BookOpen, Info } from "lucide-react"
+import { Droplets, Leaf, BookOpen, Info, ArrowLeft } from "lucide-react"
+import { UserPageHeader } from "@/components/user-page-header"
+import { useRouter } from "next/navigation"
 
 // Dados simulados de banhos
 const banhos = [
@@ -82,46 +82,87 @@ const banhos = [
 ]
 
 export default function BanhosPage() {
-  const [busca, setBusca] = useState("")
-  const [categoriaAtiva, setCategoriaAtiva] = useState("todos")
+  const [searchTerm, setSearchTerm] = useState("")
+  const [activeTab, setActiveTab] = useState("todos")
+  const router = useRouter()
 
   // Filtrar banhos por busca e categoria
   const banhosFiltrados = banhos.filter((banho) => {
     const matchBusca =
-      banho.nome.toLowerCase().includes(busca.toLowerCase()) ||
-      banho.descricao.toLowerCase().includes(busca.toLowerCase())
-    const matchCategoria = categoriaAtiva === "todos" || banho.categoria === categoriaAtiva
+      banho.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      banho.descricao.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchCategoria = activeTab === "todos" || banho.categoria === activeTab
     return matchBusca && matchCategoria
   })
 
   return (
-    <div className="container mx-auto p-4 md:p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Banhos Ritualísticos</h1>
-        <p className="text-muted-foreground">Explore os banhos ritualísticos e suas propriedades espirituais.</p>
-      </div>
+    <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
+      <UserPageHeader
+        title="Banhos Ritualísticos"
+        subtitle="Explore os banhos ritualísticos e suas propriedades espirituais."
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchPlaceholder="Buscar banhos..."
+      />
 
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
-        <div className="relative flex-grow">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar banhos..."
-            className="pl-8"
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-          />
+      <div className="flex items-center gap-4 mb-4">
+        <Button variant="ghost" size="sm" onClick={() => router.push('/user/dashboard')}>
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          <span>Voltar</span>
+        </Button>
+        <div className="flex border-b">
+          <button
+            onClick={() => setActiveTab("todos")}
+            className={`admin-tab ${
+              activeTab === "todos"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Todos
+          </button>
+          <button
+            onClick={() => setActiveTab("limpeza")}
+            className={`admin-tab ${
+              activeTab === "limpeza"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Limpeza
+          </button>
+          <button
+            onClick={() => setActiveTab("proteção")}
+            className={`admin-tab ${
+              activeTab === "proteção"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Proteção
+          </button>
+          <button
+            onClick={() => setActiveTab("prosperidade")}
+            className={`admin-tab ${
+              activeTab === "prosperidade"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Prosperidade
+          </button>
+          <button
+            onClick={() => setActiveTab("amor")}
+            className={`admin-tab ${
+              activeTab === "amor"
+                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                : "text-gray-600"
+            }`}
+          >
+            Amor
+          </button>
         </div>
       </div>
-
-      <Tabs defaultValue="todos" className="mb-8" onValueChange={setCategoriaAtiva}>
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="todos">Todos</TabsTrigger>
-          <TabsTrigger value="limpeza">Limpeza</TabsTrigger>
-          <TabsTrigger value="proteção">Proteção</TabsTrigger>
-          <TabsTrigger value="prosperidade">Prosperidade</TabsTrigger>
-          <TabsTrigger value="amor">Amor</TabsTrigger>
-        </TabsList>
-      </Tabs>
 
       {banhosFiltrados.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
