@@ -6,22 +6,30 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 
-// Dados simulados
-const mensagens = [
-  { id: 1, titulo: "Alteração na data da Gira", autor: "Maria da Mata", prioridade: "alta" },
-  { id: 2, titulo: "Doações para a Festa", autor: "João da Paz", prioridade: "media" },
-  { id: 3, titulo: "Novos materiais disponíveis", autor: "Carlos Silva", prioridade: "baixa" },
-  { id: 4, titulo: "Mutirão de Limpeza", autor: "Ana Clara", prioridade: "media" },
-  { id: 5, titulo: "Cancelamento de Evento", autor: "Carlos Tranca Ruas", prioridade: "alta" },
-  { id: 6, titulo: "Reunião de Coordenadores", autor: "José Silva", prioridade: "media" },
-  { id: 7, titulo: "Curso de Ervas Medicinais", autor: "Maria Santos", prioridade: "baixa" },
-  { id: 8, titulo: "Aviso Importante", autor: "João Pereira", prioridade: "alta" },
-]
+// Dados simulados iniciais
+const mensagensMock = [
+  { id: 1, titulo: "Alteração na data da Gira", subtitulo: "Nova data em junho", descricao: "A gira foi remarcada para 10/06.", data: "2025-06-01", urgente: true },
+  { id: 2, titulo: "Doações para a Festa", subtitulo: "Colabore!", descricao: "Estamos arrecadando doações.", data: "2025-05-15", urgente: false },
+];
+
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table"
+import FormMensagem from "./FormMensagem";
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
 
 export default function AdminMensagensPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("todas")
   const [searchTerm, setSearchTerm] = useState("")
+  const [openDialog, setOpenDialog] = useState(false)
+  const [mensagemEdit, setMensagemEdit] = useState<any | null>(null)
+  const [mensagens, setMensagens] = useState(mensagensMock)
 
   const filteredMensagens = mensagens.filter(
     (mensagem) =>
@@ -30,8 +38,8 @@ export default function AdminMensagensPage() {
   )
 
   return (
-    <div className="space-y-4">
-      <h1 className="admin-title">Gerenciar Mensagens</h1>
+    <div className="w-full bg-white flex flex-col pt-2 pb-[132px]" style={{ minHeight: '500px' }}>
+      <h1 className="text-2xl font-bold mb-1">Gerenciar Mensagens</h1>
 
       {/* Barra de pesquisa */}
       <div className="relative w-full max-w-xs mb-4">
@@ -56,10 +64,30 @@ export default function AdminMensagensPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar
-          </Button>
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={() => { setMensagemEdit(null); setOpenDialog(true); }}>
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <FormMensagem
+                {...(mensagemEdit ? { initial: mensagemEdit } : {})}
+                onCancel={() => setOpenDialog(false)}
+                onSave={(mensagem) => {
+                  if (mensagemEdit) {
+                    setMensagens(mensagens.map(m => m.id === mensagemEdit.id ? { ...m, ...mensagem } : m));
+                  } else {
+                    const novoId = Math.max(0, ...mensagens.map(m => m.id)) + 1;
+                    setMensagens([...mensagens, { ...mensagem, id: novoId }]);
+                  }
+                  setOpenDialog(false);
+                  setMensagemEdit(null);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="flex border-b ml-4">
           <button
@@ -95,20 +123,49 @@ export default function AdminMensagensPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        {filteredMensagens.map((mensagem) => (
-          <div key={mensagem.id} className="rounded-md border border-gray-200 p-4">
-            <div className="mb-4 text-center admin-subtitle">{mensagem.titulo}</div>
-            <div className="flex justify-between">
-              <button>
-                <Edit size={18} className="text-gray-600" />
-              </button>
-              <button>
-                <Trash2 size={18} className="text-red-500" />
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* Lista de Mensagens em formato de tabela */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Título</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Subtítulo</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Descrição</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Data</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Urgente</TableHead>
+              <TableHead className="text-center align-middle font-medium text-muted-foreground px-4">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredMensagens.map(mensagem => (
+              <TableRow key={mensagem.id}>
+                <TableCell className="text-left align-middle px-4">{mensagem.titulo}</TableCell>
+                <TableCell className="text-left align-middle px-4">{mensagem.subtitulo}</TableCell>
+                <TableCell className="text-left align-middle px-4">{mensagem.descricao}</TableCell>
+                <TableCell className="text-left align-middle px-4">{mensagem.data}</TableCell>
+                <TableCell className="text-left align-middle px-4">
+                  {mensagem.urgente ? (
+                    <span className="text-red-600 font-semibold">Sim</span>
+                  ) : (
+                    <span className="text-gray-500">Não</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-center align-middle px-4">
+                  <div className="inline-flex justify-center gap-2 items-center">
+                    <Button variant="ghost" size="icon" onClick={() => { setMensagemEdit(mensagem); setOpenDialog(true); }}>
+                      <Edit className="h-4 w-4" />
+                      <span className="sr-only">Editar</span>
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => setMensagens(mensagens.filter(m => m.id !== mensagem.id))} className="text-terreiro-red">
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Excluir</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   )

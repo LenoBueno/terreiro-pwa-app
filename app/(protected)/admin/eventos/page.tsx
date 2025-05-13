@@ -1,37 +1,55 @@
 "use client"
 
 import { useState } from "react"
-import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
+import { Edit, Trash2, ArrowLeft, Plus, X, Calendar, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table"
+import FormEventos from "./FormEventos"
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog"
 import { useRouter } from "next/navigation"
 
-// Dados simulados
-const eventos = [
-  { id: 1, nome: "Gira de Caboclos", data: "15/05/2025", responsavel: "Maria da Mata" },
-  { id: 2, nome: "Estudo sobre Ervas", data: "18/05/2025", responsavel: "João das Ervas" },
-  { id: 3, nome: "Festa de Pretos Velhos", data: "22/05/2025", responsavel: "João da Paz" },
-  { id: 4, nome: "Mutirão de Limpeza", data: "25/05/2025", responsavel: "Ana Clara" },
-  { id: 5, nome: "Gira de Exus", data: "07/06/2025", responsavel: "Carlos Tranca Ruas" },
-  { id: 6, nome: "Estudo sobre Orixás", data: "10/06/2025", responsavel: "João das Ervas" },
-  { id: 7, nome: "Festa de Iemanjá", data: "15/06/2025", responsavel: "Maria das Águas" },
-  { id: 8, nome: "Gira de Erês", data: "20/06/2025", responsavel: "Ana Clara" },
-]
+// Dados simulados iniciais
+const eventosMock = [
+  { id: 1, titulo: "Gira de Caboclos", subtitulo: "Sessão especial", descricao: "Evento espiritual com entidades caboclas.", data: "2025-05-15" },
+  { id: 2, titulo: "Estudo sobre Ervas", subtitulo: "Aula aberta", descricao: "Aprenda sobre ervas e seus usos.", data: "2025-05-18" },
+];
+
+// Helper para garantir campos obrigatórios
+function normalizeEvento(e: any): { id: number; titulo: string; subtitulo: string; descricao: string; data: string } {
+  return {
+    id: e.id,
+    titulo: e.titulo,
+    subtitulo: e.subtitulo ?? "",
+    descricao: e.descricao ?? "",
+    data: e.data,
+  };
+}
 
 export default function AdminEventosPage() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("proximos")
   const [searchTerm, setSearchTerm] = useState("")
+  const [openDialog, setOpenDialog] = useState(false)
+  const [eventoEdit, setEventoEdit] = useState<any | null>(null)
+  const [eventos, setEventos] = useState(eventosMock)
 
   const filteredEventos = eventos.filter(
     (evento) =>
-      evento.nome.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      evento.responsavel.toLowerCase().includes(searchTerm.toLowerCase()),
+      evento.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (evento.subtitulo && evento.subtitulo.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   return (
-    <div className="space-y-4">
-      <h1 className="admin-title">Gerenciar Eventos</h1>
+    <div className="w-full bg-white flex flex-col pt-2 pb-[132px]" style={{ minHeight: '500px' }}>
+      <h1 className="text-2xl font-bold mb-1">Gerenciar Eventos</h1>
 
       {/* Barra de pesquisa */}
       <div className="relative w-full max-w-xs mb-4">
@@ -56,10 +74,30 @@ export default function AdminEventosPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar
-          </Button>
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogTrigger asChild>
+              <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={() => { setEventoEdit(null); setOpenDialog(true); }}>
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <FormEventos
+                {...(eventoEdit ? { initial: eventoEdit } : {})}
+                onCancel={() => setOpenDialog(false)}
+                onSave={(evento) => {
+                  const normalizado = normalizeEvento({ ...evento, id: eventoEdit ? eventoEdit.id : Math.max(0, ...eventos.map(ev => ev.id)) + 1 });
+                  if (eventoEdit) {
+                    setEventos(eventos.map(ev => ev.id === eventoEdit.id ? normalizado : ev));
+                  } else {
+                    setEventos([...eventos, normalizado]);
+                  }
+                  setOpenDialog(false);
+                  setEventoEdit(null);
+                }}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="flex border-b ml-4">
           <button
@@ -85,20 +123,41 @@ export default function AdminEventosPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        {filteredEventos.map((evento) => (
-          <div key={evento.id} className="rounded-md border border-gray-200 p-4">
-            <div className="mb-4 text-center admin-subtitle">{evento.nome}</div>
-            <div className="flex justify-between">
-              <button>
-                <Edit size={18} className="text-gray-600" />
-              </button>
-              <button>
-                <Trash2 size={18} className="text-red-500" />
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* Lista de Eventos em formato de tabela */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Título</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Subtítulo</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Data</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Descrição</TableHead>
+              <TableHead className="text-center align-middle font-medium text-muted-foreground px-4">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredEventos.map(evento => (
+              <TableRow key={evento.id}>
+                <TableCell className="text-left align-middle px-4">{evento.titulo}</TableCell>
+                <TableCell className="text-left align-middle px-4">{evento.subtitulo}</TableCell>
+                <TableCell className="text-left align-middle px-4">{evento.data}</TableCell>
+                <TableCell className="text-left align-middle px-4">{evento.descricao}</TableCell>
+                <TableCell className="text-center align-middle px-4">
+                  <div className="inline-flex justify-center gap-2 items-center">
+                    <Button variant="ghost" size="icon" onClick={() => { setEventoEdit(evento); setOpenDialog(true); }}>
+                      <Edit className="h-4 w-4" />
+                      <span className="sr-only">Editar</span>
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => setEventos(eventos.filter(ev => ev.id !== evento.id))} className="text-terreiro-red">
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Excluir</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   )

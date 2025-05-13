@@ -5,34 +5,56 @@ import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
-import { Card, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+
+import FormFrente from './FormFrente'
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table"
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
+// Corrige o tipo das frentes para incluir todos os campos usados
+interface Frente {
+  titulo?: string;
+  cores?: string[];
+  id: number;
+  nome: string;
+  tipo: string;
+  subtitulo?: string;
+  descricao?: string;
+  papel?: string;
+  imagem?: File | null;
+}
 
 // Dados simulados de frentes espirituais
-const frentesIniciais = [
+const frentesIniciais: Frente[] = [
   { id: 1, nome: "Bará", tipo: "nacao" },
   { id: 2, nome: "Ogum", tipo: "umbanda" },
-  { id: 3, nome: "Oya", tipo: "umbanda" },
-  { id: 4, nome: "Xangô", tipo: "umbanda" },
-  { id: 5, nome: "Odé", tipo: "umbanda" },
-  { id: 6, nome: "Otim", tipo: "umbanda" },
-  { id: 7, nome: "Obá", tipo: "umbanda" },
-  { id: 8, nome: "Xapanã", tipo: "umbanda" },
-  { id: 9, nome: "Oxalá", tipo: "nacao" },
-  { id: 10, nome: "Iemanjá", tipo: "nacao" },
-  { id: 11, nome: "Oxum", tipo: "nacao" },
-  { id: 12, nome: "Oxóssi", tipo: "nacao" },
 ]
 
 export default function AdminFrentesPage() {
   const router = useRouter()
-  const [frentes, setFrentes] = useState(frentesIniciais)
+  const [frentes, setFrentes] = useState<Frente[]>(frentesIniciais)
   const [filtro, setFiltro] = useState("umbanda")
   const [busca, setBusca] = useState("")
+  const [showForm, setShowForm] = useState(false);
+  const [editFrente, setEditFrente] = useState<any>(null);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
+  // Ordena as frentes por nome (alfabético)
+  const frentesOrdenadas = [...frentes].sort((a, b) => a.nome.localeCompare(b.nome, 'pt-BR'));
   // Filtrar frentes
-  const frentesFiltradas = frentes
+  const frentesFiltradas = frentesOrdenadas
     .filter((frente) => frente.tipo === filtro)
-    .filter((frente) => frente.nome.toLowerCase().includes(busca.toLowerCase()))
+    .filter((frente) => frente.nome.toLowerCase().includes(busca.toLowerCase()));
 
   // Excluir frente
   const excluirFrente = (id: number) => {
@@ -46,9 +68,42 @@ export default function AdminFrentesPage() {
     setBusca("")
   }
 
+  function handleAddFrente(data: any) {
+    const novaFrente = {
+      id: Date.now(),
+      nome: data.titulo,
+      subtitulo: data.subtitulo || 'Subtítulo padrão',
+      descricao: data.descricao || 'Descrição padrão da frente.',
+      papel: data.papel || 'Papel padrão',
+      tipo: data.categoria,
+      imagem: data.imagem,
+    };
+    setFrentes(prev => [...prev, novaFrente]);
+    setFiltro(data.categoria);
+    setShowForm(false);
+  }
+
+  function handleEditFrenteSave(data: any) {
+    setFrentes(frentes => {
+      const atualizadas = frentes.map(f => f.id === editFrente.id ? {
+        ...f,
+        nome: data.titulo,
+        subtitulo: data.subtitulo,
+        descricao: data.descricao,
+        papel: data.papel,
+        imagem: data.imagem || f.imagem,
+        tipo: data.categoria,
+      } : f);
+      return atualizadas;
+    });
+    setFiltro(data.categoria);
+    setShowEditDialog(false);
+    setEditFrente(null);
+  }
+
   return (
-    <div className="space-y-4">
-      <h1 className="admin-title">Gerenciar Frentes</h1>
+    <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
+      <h1 className="text-2xl font-bold mb-1">Gerenciar Frentes</h1>
 
       {/* Barra de pesquisa */}
       <div className="relative w-full max-w-xs mb-4">
@@ -73,10 +128,17 @@ export default function AdminFrentesPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
-            <Plus className="mr-2 h-4 w-4" />
-            Adicionar
-          </Button>
+          <Dialog open={showForm} onOpenChange={setShowForm}>
+            <DialogTrigger asChild>
+              <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
+                <Plus className="mr-2 h-4 w-4" />
+                Adicionar
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <FormFrente onSubmit={handleAddFrente} onCancel={() => setShowForm(false)} />
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="flex border-b ml-4">
           <button
@@ -102,23 +164,74 @@ export default function AdminFrentesPage() {
         </div>  
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        {frentesFiltradas.map((frente) => (
-          <Card key={frente.id}>
-            <CardHeader className="mb-4 text-center">
-              <CardTitle className="admin-subtitle">{frente.nome}</CardTitle>
-            </CardHeader>
-            <CardFooter className="flex justify-between">
-              <button>
-                <Edit size={18} className="text-gray-600" />
-              </button>
-              <button onClick={() => excluirFrente(frente.id)}>
-                <Trash2 size={18} className="text-red-500" />
-              </button>
-            </CardFooter>
-          </Card>
-        ))}
+
+      {/* Lista de Frentes em formato de tabela */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Imagem</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Título</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Subtítulo</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Descrição</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Cores</TableHead>
+              <TableHead className="text-center align-middle font-medium text-muted-foreground px-4">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {frentesFiltradas.map(frente => (
+              <TableRow key={frente.id}>
+                <TableCell className="text-left align-middle px-4">
+                  {frente.imagem ? (
+                    <img
+                      src={typeof frente.imagem === 'string' ? frente.imagem : URL.createObjectURL(frente.imagem)}
+                      alt={frente.nome}
+                      className="object-cover w-12 h-12 rounded"
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-xl">📷</span>
+                  )}
+                </TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.titulo}</TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.subtitulo}</TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.descricao}</TableCell>
+                <TableCell className="text-left align-middle px-4">{frente.cores}</TableCell>
+                <TableCell className="text-center align-middle px-4">
+                  <div className="inline-flex justify-center gap-2 items-center">
+                    <Button variant="ghost" size="icon" onClick={() => { setEditFrente(frente); setShowEditDialog(true); }}>
+                      <Edit className="h-4 w-4" />
+                      <span className="sr-only">Editar</span>
+                    </Button>
+                    <Button variant="ghost" size="icon" onClick={() => excluirFrente(frente.id)} className="text-terreiro-red">
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Excluir</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
+
+      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+        <DialogContent className="max-w-md">
+          {editFrente && (
+            <FormFrente
+              initialData={{
+                titulo: editFrente.nome,
+                subtitulo: editFrente.subtitulo,
+                descricao: editFrente.descricao,
+                papel: editFrente.papel,
+                imagem: editFrente.imagem,
+                categoria: editFrente.tipo,
+              }}
+              onSubmit={handleEditFrenteSave}
+              onCancel={() => setShowEditDialog(false)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

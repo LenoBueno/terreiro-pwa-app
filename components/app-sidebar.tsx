@@ -68,34 +68,34 @@ export function AppSidebar() {
       <div className="text-xs text-gray-500 mt-4 mb-2">Menu</div>
 
       <nav className="flex flex-col space-y-1">
-        <SidebarItem href="/dashboard" icon={<Home size={16} />} active={isActive("/dashboard")}>
+        <SidebarItem href="/user/dashboard" icon={<Home size={16} />} active={isActive("/user/dashboard")}>
           Dashboard
         </SidebarItem>
-        <SidebarItem href="/frentes" icon={<Users size={16} />} active={isActive("/frentes")}>
+        <SidebarItem href="/user/frentes" icon={<Users size={16} />} active={isActive("/user/frentes")}>
           Frentes
         </SidebarItem>
-        <SidebarItem href="/eventos" icon={<Calendar size={16} />} active={isActive("/eventos")}>
+        <SidebarItem href="/user/eventos" icon={<Calendar size={16} />} active={isActive("/user/eventos")}>
           Eventos
         </SidebarItem>
-        <SidebarItem href="/leitura" icon={<BookOpen size={16} />} active={isActive("/leitura")}>
+        <SidebarItem href="/user/leitura" icon={<BookOpen size={16} />} active={isActive("/user/leitura")}>
           Leitura
         </SidebarItem>
-        <SidebarItem href="/mensagens" icon={<MessageSquare size={16} />} active={isActive("/mensagens")}>
+        <SidebarItem href="/user/mensagens" icon={<MessageSquare size={16} />} active={isActive("/user/mensagens")}>
           Mensagens
         </SidebarItem>
-        <SidebarItem href="/limpeza" icon={<Brush size={16} />} active={isActive("/limpeza")}>
+        <SidebarItem href="/user/limpeza" icon={<Brush size={16} />} active={isActive("/user/limpeza")}>
           Limpeza
         </SidebarItem>
-        <SidebarItem href="/compras" icon={<ShoppingCart size={16} />} active={isActive("/compras")}>
+        <SidebarItem href="/user/compras" icon={<ShoppingCart size={16} />} active={isActive("/user/compras")}>
           Compras
         </SidebarItem>
-        <SidebarItem href="/ervas" icon={<Leaf size={16} />} active={isActive("/ervas")}>
+        <SidebarItem href="/user/ervas" icon={<Leaf size={16} />} active={isActive("/user/ervas")}>
           Ervas
         </SidebarItem>
-        <SidebarItem href="/banhos" icon={<Droplets size={16} />} active={isActive("/banhos")}>
+        <SidebarItem href="/user/banhos" icon={<Droplets size={16} />} active={isActive("/user/banhos")}>
           Banhos
         </SidebarItem>
-        <SidebarItem href="/chat" icon={<MessageCircle size={16} />} active={isActive("/chat")}>
+        <SidebarItem href="/user/chat" icon={<MessageCircle size={16} />} active={isActive("/user/chat")}>
           Chat
         </SidebarItem>
       </nav>

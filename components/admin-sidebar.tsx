@@ -58,16 +58,14 @@ export function AdminSidebar() {
   }
 
   return (
-    <div className="w-[220px] bg-white rounded-lg p-9 flex flex-col h-auto">
+    <>
       <div className="flex items-center gap-2 mb-2">
         <div className="flex h-8 w-8 items-center justify-center rounded-full bg-terreiro-green text-white">
           <Leaf size={16} />
         </div>
         <span className="font-bold">Terreiro</span>
       </div>
-
       <div className="text-xs text-gray-500 mt-4 mb-2">Menu</div>
-
       <nav className="flex flex-col space-y-1">
         <SidebarItem href="/admin/dashboard" icon={<Home size={16} />} active={isActive("/admin/dashboard")}>
           Dashboard
@@ -102,21 +100,24 @@ export function AdminSidebar() {
         <SidebarItem href="/admin/users" icon={<Users size={16} />} active={isActive("/admin/users")}>
           Usuários
         </SidebarItem>
+        <SidebarItem href="/admin/profile" icon={<Users size={16} />} active={isActive("/admin/profile")}>
+          Perfil
+        </SidebarItem>
         {/* <SidebarItem href="/admin/reports" icon={<FileBarChart size={16} />} active={isActive("/admin/reports")}> */}
         {/*   Relatórios */}
         {/* </SidebarItem> */}
       </nav>
 
       <div className="mt-auto pt-4 flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white">N</div>
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white">U</div>
         <div className="flex flex-col">
           <span className="text-sm">Usuário</span>
-          <span className="text-xs text-gray-500">Administrador</span>
+          <span className="text-xs text-gray-500">Admin</span>
         </div>
         <button onClick={handleLogout} className="ml-auto" aria-label="Sair">
           <LogOut size={16} className="text-red-500" />
         </button>
       </div>
-    </div>
+    </>
   )
 }

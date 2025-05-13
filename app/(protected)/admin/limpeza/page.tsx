@@ -38,16 +38,6 @@ export default function AdminLimpezaPage() {
       status: "concluida",
       prioridade: "media",
     },
-    {
-      id: 3,
-      titulo: "Limpeza dos Banheiros",
-      responsavel: "Carlos Silva",
-      data: "16/05/2025",
-      horario: "10:30",
-      descricao: "Limpeza completa dos banheiros masculino e feminino.",
-      status: "pendente",
-      prioridade: "alta",
-    },
   ]
 
   // Filtrar tarefas com base na aba ativa
@@ -61,12 +51,8 @@ export default function AdminLimpezaPage() {
   })
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="admin-title tracking-tight">Gerenciar Limpeza</h1>
-      </div>
-
-      {/* Barra de pesquisa */}
+    <div>
+      <h1 className="text-2xl font-bold mb-1">Gerenciar Limpeza</h1>
       <div className="relative w-full max-w-xs mb-4">
         <Input
           type="search"

@@ -3,7 +3,6 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Dialog,
   DialogContent,
@@ -15,10 +14,11 @@ import {
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle2, Edit, Plus, Search, Trash, X, ArrowLeft } from "lucide-react"
+import { CheckCircle2, Edit, Plus, Search, Trash, Trash2, X, ArrowLeft } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { useRouter } from "next/navigation"
+import FormCompras from "./FormCompras"
 
 // Dados simulados de compras
 const comprasIniciais = [
@@ -45,42 +45,6 @@ const comprasIniciais = [
     responsavel: "João da Paz",
     dataCompra: "12/05/2025",
     status: "pendente",
-  },
-  {
-    id: 3,
-    item: "Produtos de limpeza",
-    quantidade: 5,
-    unidade: "kit",
-    preco: 30,
-    total: 150,
-    categoria: "limpeza",
-    responsavel: "Ana Clara",
-    dataCompra: "15/05/2025",
-    status: "pendente",
-  },
-  {
-    id: 4,
-    item: "Café",
-    quantidade: 10,
-    unidade: "kg",
-    preco: 25,
-    total: 250,
-    categoria: "alimentacao",
-    responsavel: "Carlos Silva",
-    dataCompra: "18/05/2025",
-    status: "pendente",
-  },
-  {
-    id: 5,
-    item: "Velas coloridas",
-    quantidade: 30,
-    unidade: "unidade",
-    preco: 3,
-    total: 90,
-    categoria: "ritual",
-    responsavel: "Maria da Mata",
-    dataCompra: "05/05/2025",
-    status: "concluida",
   },
 ]
 
@@ -219,12 +183,8 @@ export default function AdminComprasPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="admin-title tracking-tight">Gerenciar Compras</h2>
-      </div>
-
-      {/* Barra de pesquisa padrão */}
+    <div>
+      <h1 className="text-2xl font-bold mb-1">Gerenciar Compras</h1>
       <div className="relative w-full max-w-xs mb-4">
         <Input
           type="search"
@@ -255,98 +215,13 @@ export default function AdminComprasPage() {
               </Button>
             </DialogTrigger>
             <DialogContent className="max-w-md">
-              <DialogHeader>
-                <DialogTitle>Adicionar Nova Compra</DialogTitle>
-                <DialogDescription>Preencha os dados da nova compra.</DialogDescription>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <Label htmlFor="item">Item</Label>
-                  <Input
-                    id="item"
-                    value={novaCompra.item}
-                    onChange={(e) => setNovaCompra({ ...novaCompra, item: e.target.value })}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="quantidade">Quantidade</Label>
-                    <Input
-                      id="quantidade"
-                      type="number"
-                      min="1"
-                      value={novaCompra.quantidade}
-                      onChange={(e) =>
-                        setNovaCompra({ ...novaCompra, quantidade: Number.parseFloat(e.target.value) || 0 })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="unidade">Unidade</Label>
-                    <Select
-                      value={novaCompra.unidade}
-                      onValueChange={(value) => setNovaCompra({ ...novaCompra, unidade: value })}
-                    >
-                      <SelectTrigger id="unidade">
-                        <SelectValue placeholder="Selecione a unidade" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="unidade">Unidade</SelectItem>
-                        <SelectItem value="kg">Kg</SelectItem>
-                        <SelectItem value="litro">Litro</SelectItem>
-                        <SelectItem value="pacote">Pacote</SelectItem>
-                        <SelectItem value="kit">Kit</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="preco">Preço Unitário (R$)</Label>
-                  <Input
-                    id="preco"
-                    type="number"
-                    min="0.01"
-                    step="0.01"
-                    value={novaCompra.preco}
-                    onChange={(e) =>
-                      setNovaCompra({ ...novaCompra, preco: Number.parseFloat(e.target.value) || 0 })
-                    }
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="categoria">Categoria</Label>
-                  <Select
-                    value={novaCompra.categoria}
-                    onValueChange={(value) => setNovaCompra({ ...novaCompra, categoria: value })}
-                  >
-                    <SelectTrigger id="categoria">
-                      <SelectValue placeholder="Selecione a categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="ritual">Ritual</SelectItem>
-                      <SelectItem value="ervas">Ervas</SelectItem>
-                      <SelectItem value="limpeza">Limpeza</SelectItem>
-                      <SelectItem value="alimentacao">Alimentação</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="responsavel">Responsável</Label>
-                  <Input
-                    id="responsavel"
-                    value={novaCompra.responsavel}
-                    onChange={(e) => setNovaCompra({ ...novaCompra, responsavel: e.target.value })}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancelar
-                </Button>
-                <Button className="bg-terreiro-green hover:bg-terreiro-green/90" onClick={adicionarCompra}>
-                  Adicionar
-                </Button>
-              </DialogFooter>
+              <FormCompras
+                values={novaCompra}
+                onChange={values => setNovaCompra({ ...novaCompra, ...values })}
+                onSubmit={adicionarCompra}
+                onCancel={() => setDialogOpen(false)}
+                submitLabel="Adicionar"
+              />
             </DialogContent>
           </Dialog>
         </div>
@@ -388,71 +263,62 @@ export default function AdminComprasPage() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Item</TableHead>
-              <TableHead>Quantidade</TableHead>
-              <TableHead>Preço Unit.</TableHead>
-              <TableHead>Total</TableHead>
-              <TableHead>Categoria</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Item</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Quantidade</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Preço Unit.</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Responsável</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Categoria</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Status</TableHead>
+              <TableHead className="text-center align-middle font-medium text-muted-foreground px-4">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {comprasFiltradas.map((compra) => (
               <TableRow key={compra.id} className={compra.status === "concluida" ? "opacity-70" : ""}>
-                <TableCell className="font-medium">{compra.item}</TableCell>
-                <TableCell>
+                <TableCell className="text-left align-middle px-4">{compra.item}</TableCell>
+                <TableCell className="text-left align-middle px-4">
                   {compra.quantidade} {compra.unidade}
                 </TableCell>
-                <TableCell>R$ {compra.preco.toFixed(2)}</TableCell>
-                <TableCell>R$ {compra.total.toFixed(2)}</TableCell>
-                <TableCell>
-                  <Badge variant="outline" className={getCategoriaBadge(compra.categoria)}>
-                    {compra.categoria === "ritual"
-                      ? "Ritual"
-                      : compra.categoria === "ervas"
-                        ? "Ervas"
-                        : compra.categoria === "limpeza"
-                          ? "Limpeza"
-                          : "Alimentação"}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge
-                    variant={compra.status === "pendente" ? "outline" : "default"}
-                    className={
-                      compra.status === "pendente" ? "bg-amber-600 text-white" : "bg-terreiro-green text-white"
-                    }
-                  >
-                    {compra.status === "pendente" ? "Pendente" : "Concluída"}
-                  </Badge>
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="icon" onClick={() => setCompraEditando(compra)}>
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Editar</span>
-                    </Button>
-                    {compra.status === "pendente" && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => marcarComoConcluida(compra.id)}
-                        className="text-terreiro-green"
-                      >
-                        <CheckCircle2 className="h-4 w-4" />
-                        <span className="sr-only">Concluir</span>
-                      </Button>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => excluirCompra(compra.id)}
-                      className="text-terreiro-red"
-                    >
-                      <Trash className="h-4 w-4" />
-                      <span className="sr-only">Excluir</span>
-                    </Button>
+                <TableCell className="text-left align-middle px-4">R$ {compra.preco.toFixed(2)}</TableCell>
+                <TableCell className="text-left align-middle px-4">{compra.responsavel}</TableCell>
+                <TableCell className="text-left align-middle px-4">
+  {compra.categoria === "ritual"
+    ? "Ritual"
+    : compra.categoria === "ervas"
+      ? "Ervas"
+      : compra.categoria === "limpeza"
+        ? "Limpeza"
+        : "Alimentação"}
+</TableCell>
+                <TableCell className="text-left align-middle px-4">
+  {compra.status === "pendente" ? "Pendente" : "Concluída"}
+</TableCell>
+                <TableCell className="text-center align-middle px-4">
+                  <div className="inline-flex justify-center gap-2 items-center">
+                    <Button variant="ghost" size="icon" onClick={() => { setCompraEditando(compra); setDialogEditOpen(true); }}>
+  <Edit className="h-4 w-4" />
+  <span className="sr-only">Editar</span>
+</Button>
+<Button
+  variant="ghost"
+  size="icon"
+  onClick={() => excluirCompra(compra.id)}
+  className="text-terreiro-red"
+>
+  <Trash2 className="h-4 w-4" />
+  <span className="sr-only">Excluir</span>
+</Button>
+{compra.status === "pendente" && (
+  <Button
+    variant="ghost"
+    size="icon"
+    onClick={() => marcarComoConcluida(compra.id)}
+    className="text-terreiro-green"
+  >
+    <CheckCircle2 className="h-4 w-4" />
+    <span className="sr-only">Concluir</span>
+  </Button>
+) }
                   </div>
                 </TableCell>
               </TableRow>

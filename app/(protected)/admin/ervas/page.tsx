@@ -5,31 +5,92 @@ import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter
+} from "@/components/ui/dialog"
+import { FormErvas } from "./FormErvas"
 
 // Dados simulados
-const ervas = [
-  { id: 1, nome: "Arruda", categoria: "proteção" },
-  { id: 2, nome: "Guiné", categoria: "proteção" },
-  { id: 3, nome: "Alfazema", categoria: "harmonia" },
-  { id: 4, nome: "Alecrim", categoria: "proteção" },
-  { id: 5, nome: "Manjericão", categoria: "prosperidade" },
-  { id: 6, nome: "Espada de São Jorge", categoria: "proteção" },
-  { id: 7, nome: "Comigo-ninguém-pode", categoria: "proteção" },
-  { id: 8, nome: "Abre-caminho", categoria: "prosperidade" },
+export type Erva = {
+  id: number
+  nome: string
+  nomeCientifico: string
+  descricao: string
+  categoria: string
+}
+
+export const ervasMock: Erva[] = [
+  {
+    id: 1,
+    nome: "Arruda",
+    nomeCientifico: "Ruta graveolens",
+    descricao: "Erva de proteção espiritual e limpeza energética.",
+    categoria: "proteção",
+  },
+  {
+    id: 2,
+    nome: "Guiné",
+    nomeCientifico: "Petiveria alliacea",
+    descricao: "Utilizada para afastar energias negativas e proteção.",
+    categoria: "proteção",
+  },  
 ]
 
+
 export default function AdminErvasPage() {
+  const handleDelete = (id: number) => {
+    setErvas((prev) => prev.filter((erva) => erva.id !== id));
+  };
   const router = useRouter()
+  const [ervas, setErvas] = useState<Erva[]>(ervasMock)
   const [activeTab, setActiveTab] = useState("todas")
   const [searchTerm, setSearchTerm] = useState("")
+  const [openDialog, setOpenDialog] = useState(false)
+  const [editErva, setEditErva] = useState<Erva | null>(null)
 
   const filteredErvas = ervas.filter((erva) => erva.nome.toLowerCase().includes(searchTerm.toLowerCase()))
 
-  return (
-    <div className="space-y-4">
-      <h1 className="admin-title">Gerenciar Ervas</h1>
+  function handleAdd() {
+    setEditErva(null)
+    setOpenDialog(true)
+  }
 
-      {/* Barra de pesquisa */}
+  function handleEdit(erva: Erva) {
+    setEditErva(erva)
+    setOpenDialog(true)
+  }
+
+  function handleClose() {
+    setOpenDialog(false)
+    setEditErva(null)
+  }
+
+  function handleSubmit(data: Omit<Erva, "id">) {
+    if (editErva) {
+      setErvas(ervas.map(e => e.id === editErva.id ? { ...editErva, ...data } : e))
+    } else {
+      setErvas([...ervas, { ...data, id: Math.max(...ervas.map(e => e.id), 0) + 1 }])
+    }
+    setOpenDialog(false)
+    setEditErva(null)
+  }
+
+  return (
+    <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
+      <h1 className="text-2xl font-bold mb-1">Gerenciar Ervas</h1>
       <div className="relative w-full max-w-xs mb-4">
         <Input
           type="search"
@@ -52,10 +113,22 @@ export default function AdminErvasPage() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
-          <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90">
+          <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={handleAdd}>
             <Plus className="mr-2 h-4 w-4" />
             Adicionar
           </Button>
+          <Dialog open={openDialog} onOpenChange={setOpenDialog}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{editErva ? 'Editar Erva' : 'Adicionar Erva'}</DialogTitle>
+              </DialogHeader>
+              <FormErvas
+                initialData={editErva ?? undefined}
+                onSubmit={handleSubmit}
+                onCancel={handleClose}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
         <div className="flex border-b ml-4">
           <button
@@ -101,20 +174,41 @@ export default function AdminErvasPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
-        {filteredErvas.map((erva) => (
-          <div key={erva.id} className="rounded-md border border-gray-200 p-4">
-            <div className="mb-4 text-center admin-subtitle">{erva.nome}</div>
-            <div className="flex justify-between">
-              <button>
-                <Edit size={18} className="text-gray-600" />
-              </button>
-              <button>
-                <Trash2 size={18} className="text-red-500" />
-              </button>
-            </div>
-          </div>
-        ))}
+      {/* Lista de Ervas em formato de tabela */}
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Nome</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Nome Científico</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Descrição</TableHead>
+              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Categoria</TableHead>
+              <TableHead className="text-center align-middle font-medium text-muted-foreground px-4">Ações</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredErvas.map((erva) => (
+              <TableRow key={erva.id}>
+                <TableCell className="text-left align-middle px-4">{erva.nome}</TableCell>
+                <TableCell className="text-left align-middle px-4">{erva.nomeCientifico}</TableCell>
+                <TableCell className="text-left align-middle px-4">{erva.descricao}</TableCell>
+                <TableCell className="text-left align-middle px-4">{erva.categoria}</TableCell>
+                <TableCell className="text-center align-middle px-4">
+                  <div className="inline-flex justify-center gap-2 items-center">
+                    <Button variant="ghost" size="icon" onClick={() => handleEdit(erva)}>
+                      <Edit className="h-4 w-4" />
+                      <span className="sr-only">Editar</span>
+                    </Button>
+                    <Button variant="ghost" size="icon" className="text-terreiro-red" onClick={() => handleDelete(erva.id)}>
+                      <Trash2 className="h-4 w-4" />
+                      <span className="sr-only">Excluir</span>
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
     </div>
   )

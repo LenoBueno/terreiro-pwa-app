@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
     const { password: _, ...userWithoutPassword } = user
 
     // Determinar para onde redirecionar com base no papel do usuário
-    const redirectUrl = user.role === "admin" ? "/admin/dashboard" : "/dashboard"
+    const redirectUrl = user.role === "admin" ? "/admin/dashboard" : "/user/dashboard"
 
     return NextResponse.json(
       {

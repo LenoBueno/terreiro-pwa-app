@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (userWithoutPassword.role === "admin") {
           router.push("/admin/dashboard")
         } else {
-          router.push("/dashboard")
+          router.push("/user/dashboard")
         }
 
         return true

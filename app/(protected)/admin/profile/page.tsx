@@ -9,217 +9,345 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { ArrowLeft, Mail, Phone, Calendar, MapPin, Shield, LogOut, User, Bell, Lock } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { useRouter } from "next/navigation"
 
 export default function AdminProfilePage() {
   const [isEditing, setIsEditing] = useState(false)
+  const [tab, setTab] = useState<'perfil' | 'notificacoes' | 'seguranca'>('perfil');
+  const router = useRouter();
   
-  // Dados de exemplo do perfil
-  const [profile, setProfile] = useState({
-    name: 'João Silva',
+  // Dados simulados do admin
+  const [dadosPerfil, setDadosPerfil] = useState({
+    nome: 'João Silva',
     email: 'joao.silva@terreiro.org',
-    role: 'Administrador',
-    phone: '(11) 98765-4321',
-    bio: 'Administrador do terreiro desde 2020. Responsável pela gestão digital e comunicação.',
-    avatar: '/placeholder.svg?height=100&width=100',
-    notifications: {
-      email: true,
-      push: true,
-      sms: false
-    }
+    telefone: '(11) 98765-4321',
+    dataNascimento: '10/01/1980',
+    endereco: 'Rua das Flores, 123 - São Paulo, SP',
+    cargo: 'Administrador',
+    dataIngresso: '01/01/2022',
+    avatar: '/placeholder.svg?height=200&width=200',
+    bio: 'Administrador do terreiro desde 2020. Responsável pela gestão digital e comunicação.'
   })
+  const [notificacoes, setNotificacoes] = useState({
+    email: true,
+    push: true,
+    eventos: true,
+    mensagens: true,
+  })
+  const [senhaAtual, setSenhaAtual] = useState("")
+  const [novaSenha, setNovaSenha] = useState("")
+  const [confirmarSenha, setConfirmarSenha] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSave = () => {
-    // Aqui seria implementada a lógica para salvar as alterações
-    setIsEditing(false)
+  // Atualizar dados do perfil
+  const atualizarPerfil = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setTimeout(() => {
+      setIsLoading(false)
+      alert("Perfil atualizado com sucesso!")
+    }, 1000)
+  }
+
+  // Atualizar notificações
+  const atualizarNotificacoes = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    setTimeout(() => {
+      setIsLoading(false)
+      alert("Preferências de notificação atualizadas com sucesso!")
+    }, 1000)
+  }
+
+  // Atualizar senha
+  const atualizarSenha = (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsLoading(true)
+    if (novaSenha !== confirmarSenha) {
+      setIsLoading(false)
+      alert("As senhas não coincidem!")
+      return
+    }
+    setTimeout(() => {
+      setIsLoading(false)
+      setSenhaAtual("")
+      setNovaSenha("")
+      setConfirmarSenha("")
+      alert("Senha atualizada com sucesso!")
+    }, 1000)
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">Perfil do Administrador</h1>
-          <p className="text-muted-foreground">Gerencie suas informações e preferências</p>
+    <div className="container mx-auto p-4 md:p-6">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold">Perfil do Administrador</h1>
+        <p className="text-muted-foreground">Gerencie suas informações pessoais e preferências.</p>
+        <div className="flex items-center gap-4 mt-4">
+          <Button variant="ghost" size="sm" className="admin-button" onClick={() => router.back()}>
+            <ArrowLeft className="mr-1 h-4 w-4" />
+            <span>Voltar</span>
+          </Button>
+          <Tabs defaultValue={tab} onValueChange={v => setTab(v as any)}>
+            <TabsList className="grid grid-cols-3">
+              <TabsTrigger value="perfil">
+                <User className="h-4 w-4 mr-2" />
+                Dados pessoais
+              </TabsTrigger>
+              <TabsTrigger value="notificacoes">
+                <Bell className="h-4 w-4 mr-2" />
+                Notificações
+              </TabsTrigger>
+              <TabsTrigger value="seguranca">
+                <Lock className="h-4 w-4 mr-2" />
+                Segurança
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
         </div>
       </div>
 
-      <Tabs defaultValue="info">
-        <TabsList className="mb-6">
-          <TabsTrigger value="info">Informações Pessoais</TabsTrigger>
-          <TabsTrigger value="security">Segurança</TabsTrigger>
-          <TabsTrigger value="notifications">Notificações</TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Card lateral com avatar e dados detalhados do admin */}
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle>Informações</CardTitle>
+            <CardDescription>Seus dados administrativos</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center p-3">
+            <Avatar className="h-20 w-20 mb-2">
+              <AvatarImage src={dadosPerfil.avatar || "/placeholder.svg"} alt={dadosPerfil.nome} />
+              <AvatarFallback className="text-lg">{(dadosPerfil.nome || '').split(' ').map(p => p[0]).join('')}</AvatarFallback>
+            </Avatar>
+            <h2 className="text-base font-semibold">{dadosPerfil.nome}</h2>
+            <div className="flex items-center gap-1 mt-1">
+              <Badge variant="outline" className="bg-terreiro-green text-white text-xs px-2 py-0.5">
+                {dadosPerfil.cargo}
+              </Badge>
+            </div>
+            <Separator className="my-4" />
+            <div className="w-full space-y-2">
+              <div className="flex items-center gap-3">
+                <Mail className="h-4 w-4 text-terreiro-green" />
+                <span className="text-sm">{dadosPerfil.email}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Phone className="h-4 w-4 text-terreiro-green" />
+                <span className="text-sm">{dadosPerfil.telefone}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Calendar className="h-4 w-4 text-terreiro-green" />
+                <span className="text-sm">{dadosPerfil.dataNascimento}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <MapPin className="h-4 w-4 text-terreiro-green" />
+                <span className="text-sm">{dadosPerfil.endereco}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Shield className="h-4 w-4 text-terreiro-green" />
+                <span className="text-sm">Admin desde {dadosPerfil.dataIngresso}</span>
+              </div>
+            </div>
+            <Separator className="my-4" />
+            <div className="w-full flex items-start gap-2">
+              <span className="h-4 w-4 font-medium text-xs">Bio:</span>
+              <span className="text-xs italic text-gray-700">{dadosPerfil.bio}</span>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button variant="outline" className="w-full h-8 text-xs">
+              <LogOut className="mr-1 h-3 w-3" />
+              Sair
+            </Button>
+          </CardFooter>
+        </Card>
 
-        <TabsContent value="info">
-          <Card>
-            <CardHeader>
-              <CardTitle>Informações Pessoais</CardTitle>
-              <CardDescription>
-                Atualize suas informações pessoais e de contato
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex flex-col items-center gap-4">
-                  <Avatar className="h-24 w-24">
-                    <AvatarImage src={profile.avatar || "/placeholder.svg"} alt={profile.name} />
-                    <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <Button variant="outline" size="sm">
-                    Alterar Foto
-                  </Button>
-                </div>
-                <div className="flex-1 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Card principal com abas */}
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Configurações</CardTitle>
+            <CardDescription>Gerencie suas configurações de conta</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {tab === 'perfil' && (
+              <form onSubmit={atualizarPerfil}>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="nome">Nome completo</Label>
+                        <Input
+                          id="nome"
+                          value={dadosPerfil.nome}
+                          onChange={e => setDadosPerfil({ ...dadosPerfil, nome: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={dadosPerfil.email}
+                          onChange={e => setDadosPerfil({ ...dadosPerfil, email: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="telefone">Telefone</Label>
+                        <Input
+                          id="telefone"
+                          value={dadosPerfil.telefone}
+                          onChange={e => setDadosPerfil({ ...dadosPerfil, telefone: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="dataNascimento">Data de nascimento</Label>
+                        <Input
+                          id="dataNascimento"
+                          value={dadosPerfil.dataNascimento}
+                          onChange={e => setDadosPerfil({ ...dadosPerfil, dataNascimento: e.target.value })}
+                        />
+                      </div>
+                    </div>
                     <div className="space-y-2">
-                      <Label htmlFor="name">Nome Completo</Label>
-                      <Input 
-                        id="name" 
-                        value={profile.name} 
-                        disabled={!isEditing}
-                        onChange={(e) => setProfile({...profile, name: e.target.value})}
+                      <Label htmlFor="endereco">Endereço</Label>
+                      <Input
+                        id="endereco"
+                        value={dadosPerfil.endereco}
+                        onChange={e => setDadosPerfil({ ...dadosPerfil, endereco: e.target.value })}
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full bg-terreiro-green hover:bg-terreiro-green/90"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Salvando..." : "Salvar alterações"}
+                    </Button>
+                  </div>
+                </form>
+            )}
+            {tab === 'notificacoes' && (
+              <form onSubmit={atualizarNotificacoes}>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">Notificações por email</h3>
+                        <p className="text-sm text-muted-foreground">Receba notificações por email sobre atividades importantes.</p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={notificacoes.email}
+                          onChange={() => setNotificacoes({ ...notificacoes, email: !notificacoes.email })}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-terreiro-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-terreiro-green"></div>
+                      </label>
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">Notificações push</h3>
+                        <p className="text-sm text-muted-foreground">Receba notificações push no seu dispositivo.</p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={notificacoes.push}
+                          onChange={() => setNotificacoes({ ...notificacoes, push: !notificacoes.push })}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-terreiro-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-terreiro-green"></div>
+                      </label>
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">Eventos</h3>
+                        <p className="text-sm text-muted-foreground">Receba notificações sobre eventos e giras.</p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={notificacoes.eventos}
+                          onChange={() => setNotificacoes({ ...notificacoes, eventos: !notificacoes.eventos })}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-terreiro-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-terreiro-green"></div>
+                      </label>
+                    </div>
+                    <Separator />
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-medium">Mensagens</h3>
+                        <p className="text-sm text-muted-foreground">Receba notificações sobre novas mensagens.</p>
+                      </div>
+                      <label className="relative inline-flex items-center cursor-pointer">
+                        <input
+                          type="checkbox"
+                          className="sr-only peer"
+                          checked={notificacoes.mensagens}
+                          onChange={() => setNotificacoes({ ...notificacoes, mensagens: !notificacoes.mensagens })}
+                        />
+                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-terreiro-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-terreiro-green"></div>
+                      </label>
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full bg-terreiro-green hover:bg-terreiro-green/90"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Salvando..." : "Salvar preferências"}
+                    </Button>
+                  </div>
+                </form>
+            )}
+            {tab === 'seguranca' && (
+              <form onSubmit={atualizarSenha}>
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="senhaAtual">Senha atual</Label>
+                      <Input
+                        id="senhaAtual"
+                        type="password"
+                        value={senhaAtual}
+                        onChange={e => setSenhaAtual(e.target.value)}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input 
-                        id="email" 
-                        type="email" 
-                        value={profile.email} 
-                        disabled={!isEditing}
-                        onChange={(e) => setProfile({...profile, email: e.target.value})}
+                      <Label htmlFor="novaSenha">Nova senha</Label>
+                      <Input
+                        id="novaSenha"
+                        type="password"
+                        value={novaSenha}
+                        onChange={e => setNovaSenha(e.target.value)}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="role">Cargo</Label>
-                      <Input 
-                        id="role" 
-                        value={profile.role} 
-                        disabled={!isEditing}
-                        onChange={(e) => setProfile({...profile, role: e.target.value})}
+                      <Label htmlFor="confirmarSenha">Confirmar nova senha</Label>
+                      <Input
+                        id="confirmarSenha"
+                        type="password"
+                        value={confirmarSenha}
+                        onChange={e => setConfirmarSenha(e.target.value)}
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="phone">Telefone</Label>
-                      <Input 
-                        id="phone" 
-                        value={profile.phone} 
-                        disabled={!isEditing}
-                        onChange={(e) => setProfile({...profile, phone: e.target.value})}
-                      />
-                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full bg-terreiro-green hover:bg-terreiro-green/90"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Atualizando..." : "Atualizar senha"}
+                    </Button>
                   </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="bio">Biografia</Label>
-                    <Textarea 
-                      id="bio" 
-                      rows={4} 
-                      value={profile.bio} 
-                      disabled={!isEditing}
-                      onChange={(e) => setProfile({...profile, bio: e.target.value})}
-                    />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-end gap-2">
-              {isEditing ? (
-                <>
-                  <Button variant="outline" onClick={() => setIsEditing(false)}>
-                    Cancelar
-                  </Button>
-                  <Button onClick={handleSave}>
-                    Salvar Alterações
-                  </Button>
-                </>
-              ) : (
-                <Button onClick={() => setIsEditing(true)}>
-                  Editar Perfil
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="security">
-          <Card>
-            <CardHeader>
-              <CardTitle>Segurança</CardTitle>
-              <CardDescription>
-                Gerencie sua senha e configurações de segurança
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="current-password">Senha Atual</Label>
-                <Input id="current-password" type="password" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="new-password">Nova Senha</Label>
-                <Input id="new-password" type="password" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirmar Nova Senha</Label>
-                <Input id="confirm-password" type="password" />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full">Atualizar Senha</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="notifications">
-          <Card>
-            <CardHeader>
-              <CardTitle>Preferências de Notificação</CardTitle>
-              <CardDescription>Configure como deseja ser notificado</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Email</p>
-                    <p className="text-sm text-muted-foreground">Receba notificações por email</p>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={profile.notifications.email}
-                    onChange={(e) => setProfile({...profile, notifications: {...profile.notifications, email: e.target.checked}})}
-                    className="toggle"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">Push</p>
-                    <p className="text-sm text-muted-foreground">Receba notificações push</p>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={profile.notifications.push}
-                    onChange={(e) => setProfile({...profile, notifications: {...profile.notifications, push: e.target.checked}})}
-                    className="toggle"
-                  />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">SMS</p>
-                    <p className="text-sm text-muted-foreground">Receba notificações por SMS</p>
-                  </div>
-                  <input 
-                    type="checkbox" 
-                    checked={profile.notifications.sms}
-                    onChange={(e) => setProfile({...profile, notifications: {...profile.notifications, sms: e.target.checked}})}
-                    className="toggle"
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button className="w-full">Salvar Preferências</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                </form>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

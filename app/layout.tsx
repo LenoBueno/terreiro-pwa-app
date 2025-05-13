@@ -20,6 +20,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
+      <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+        <meta name="theme-color" content="#0B4D1A" />
+        <link rel="manifest" href="/manifest.json" />
+      </head>
       <body className={inter.className}>
         <AuthProvider>
           {children}
