@@ -1,31 +1,29 @@
 "use client"
 
-import { useState } from "react"
-import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useMediaQuery } from "../../../../hooks/use-media-query"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-
+import { Edit, Trash2, ArrowLeft, Plus, X, Users } from "lucide-react"
 import FormFrente from './FormFrente'
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table"
 import {
   Dialog,
   DialogContent,
   DialogTrigger,
 } from "@/components/ui/dialog"
 
-// Corrige o tipo das frentes para incluir todos os campos usados
+// Carrega o componente mobile apenas no cliente
+const AdminFrentesMobile = dynamic(
+  () => import('./AdminFrentesMobile'),
+  { ssr: false }
+)
+
+// Interface para as frentes
 interface Frente {
   titulo?: string;
-  cores?: string[];
   id: number;
   nome: string;
   tipo: string;
@@ -35,20 +33,28 @@ interface Frente {
   imagem?: File | null;
 }
 
-// Dados simulados de frentes espirituais
-const frentesIniciais: Frente[] = [
-  { id: 1, nome: "Bará", tipo: "nacao" },
-  { id: 2, nome: "Ogum", tipo: "umbanda" },
-]
-
 export default function AdminFrentesPage() {
   const router = useRouter()
-  const [frentes, setFrentes] = useState<Frente[]>(frentesIniciais)
+  const isMobile = useMediaQuery("(max-width: 768px)")
+  const [isClient, setIsClient] = useState(false)
+  
+  // Evita hidratação desnecessária
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Código original do desktop abaixo
+  const [frentes, setFrentes] = useState<Frente[]>([])
   const [filtro, setFiltro] = useState("umbanda")
   const [busca, setBusca] = useState("")
-  const [showForm, setShowForm] = useState(false);
-  const [editFrente, setEditFrente] = useState<Frente | null>(null);
-  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [showForm, setShowForm] = useState(false)
+  const [editFrente, setEditFrente] = useState<Frente | null>(null)
+  const [showEditDialog, setShowEditDialog] = useState(false)
+  
+  // Se for mobile e o cliente já estiver carregado, renderiza o componente mobile
+  if (isMobile && isClient) {
+    return <AdminFrentesMobile />
+  }
 
   // Normaliza as frentes para garantir que todos os campos necessários existam
   const frentesNormalizadas = frentes.map(frente => ({
@@ -56,7 +62,6 @@ export default function AdminFrentesPage() {
     titulo: frente.titulo || frente.nome,
     subtitulo: frente.subtitulo || '',
     descricao: frente.descricao || '',
-    cores: frente.cores || ''
   }));
   
   // Ordena as frentes por nome (alfabético)
@@ -86,7 +91,6 @@ export default function AdminFrentesPage() {
       subtitulo: data.subtitulo || 'Subtítulo padrão',
       descricao: data.descricao || 'Descrição padrão da frente.',
       papel: data.papel || 'Papel padrão',
-      cores: data.cores || '',
       tipo: data.categoria,
       imagem: data.imagem,
     };
@@ -104,7 +108,6 @@ export default function AdminFrentesPage() {
         subtitulo: data.subtitulo,
         descricao: data.descricao,
         papel: data.papel,
-        cores: data.cores,
         imagem: data.imagem || f.imagem,
         tipo: data.categoria,
       } : f);
@@ -130,10 +133,10 @@ export default function AdminFrentesPage() {
 
   return (
     <div className="w-full bg-white flex flex-col pt-5 pb-[132px]" style={{ minHeight: '500px' }}>
-      <h1 className="text-2xl font-bold mb-1">Gerenciar Frentes</h1>
+      <h1 className="text-2xl font-bold mb-1 px-4">Gerenciar Frentes</h1>
 
-      {/* Barra de pesquisa */}
-      <div className="relative w-full max-w-xs mb-4">
+      {/* Barra de pesquisa - Keep existing */}
+      <div className="relative w-full max-w-xs mb-4 px-4"> {/* Added px-4 for padding */}
         <Input
           type="search"
           placeholder="Procurar"
@@ -142,16 +145,17 @@ export default function AdminFrentesPage() {
           onChange={(e) => setBusca(e.target.value)}
         />
         {busca && (
-          <button onClick={() => setBusca("")} className="absolute right-2 top-1/2 -translate-y-1/2">
+          <button onClick={() => setBusca("")} className="absolute right-2 top-1/2 -translate-y-1/2 p-1"> {/* Added p-1 for click area */}
             <X className="h-4 w-4 text-muted-foreground" />
           </button>
         )}
       </div>
 
-      {/* Botões à esquerda e abas à direita */}
-      <div className="flex items-center gap-4 mb-4">
+      {/* Botões à esquerda e abas à direita - Keep existing structure, adjust padding */}
+      <div className="flex items-center gap-4 mb-4 px-4"> {/* Added px-4 for padding */}
         <div className="flex items-center gap-2">
-          <Link href="/admin/dashboard">
+          {/* Using Link and Button as in the current code */}
+           <Link href="/admin/dashboard">
             <Button variant="ghost" className="admin-button">
               <ArrowLeft className="mr-2 h-4 w-4" />
               Voltar
@@ -159,7 +163,7 @@ export default function AdminFrentesPage() {
           </Link>
           <Dialog open={showForm} onOpenChange={setShowForm}>
             <DialogTrigger asChild>
-              <Button className="admin-button bg-terreiro-green hover:bg-terreiro-green/90" onClick={() => setShowForm(true)}>
+              <Button className="admin-button bg-[#006B3F] hover:bg-[#005A3F]" onClick={() => setShowForm(true)}> {/* Adjusted color */}
                 <Plus className="mr-2 h-4 w-4" />
                 Adicionar
               </Button>
@@ -174,7 +178,7 @@ export default function AdminFrentesPage() {
             onClick={() => setFiltro("umbanda")}
             className={`admin-tab ${
               filtro === "umbanda"
-                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                ? "border-b-2 border-[#006B3F] text-[#006B3F]" // Adjusted color
                 : "text-gray-600"
             }`}
           >
@@ -184,66 +188,42 @@ export default function AdminFrentesPage() {
             onClick={() => setFiltro("nacao")}
             className={`admin-tab ${
               filtro === "nacao"
-                ? "border-b-2 border-terreiro-green text-terreiro-green"
+                ? "border-b-2 border-[#006B3F] text-[#006B3F]" // Adjusted color
                 : "text-gray-600"
             }`}
           >
             Nação
           </button>
-        </div>  
+        </div>
       </div>
 
-
-      {/* Lista de Frentes em formato de tabela */}
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Imagem</TableHead>
-              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Título</TableHead>
-              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Subtítulo</TableHead>
-              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Descrição</TableHead>
-              <TableHead className="text-left align-middle font-medium text-muted-foreground px-4">Cores</TableHead>
-              <TableHead className="text-center align-middle font-medium text-muted-foreground px-4">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {frentesFiltradas.map(frente => (
-              <TableRow key={frente.id}>
-                <TableCell className="text-left align-middle px-4">
-                  {frente.imagem ? (
+      {/* Grid display for Frentes */}
+      <div className="flex-1 px-4"> {/* Added px-4 for padding */}
+        <div className="grid grid-cols-4 gap-4"> {/* Adjusted grid columns and gap */}
+          {frentesFiltradas.map(frente => (
+            <div key={frente.id} className="flex flex-col items-center">
+              <div className="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center mb-2 overflow-hidden shadow-custom-frente"> {/* Placeholder styling */}
+                 {/* Replace with your custom icon/image component for the frente */}
+                 {frente.imagem ? (
                     <img
                       src={typeof frente.imagem === 'string' ? frente.imagem : URL.createObjectURL(frente.imagem)}
                       alt={frente.nome}
-                      className="object-cover w-12 h-12 rounded"
+                      className="object-cover w-full h-full"
                     />
                   ) : (
-                    <span className="text-gray-400 text-xl">📷</span>
+                    <Users size={30} className="text-gray-500" /> // Generic placeholder icon
                   )}
-                </TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.titulo || frente.nome}</TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.subtitulo || '-'}</TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.descricao || '-'}</TableCell>
-                <TableCell className="text-left align-middle px-4">{frente.cores || '-'}</TableCell>
-                <TableCell className="text-center align-middle px-4">
-                  <div className="inline-flex justify-center gap-2 items-center">
-                    <Button variant="ghost" size="icon" onClick={() => { setEditFrente(frente); setShowEditDialog(true); }}>
-                      <Edit className="h-4 w-4" />
-                      <span className="sr-only">Editar</span>
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => excluirFrente(frente.id)} className="text-terreiro-red">
-                      <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Excluir</span>
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+              </div>
+              <span className="text-xs text-gray-700 text-center font-medium truncate w-full">
+                {frente.nome} {/* Displaying name as label */}
+              </span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+      {/* Edit Dialog - Keep existing */}
+       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent className="max-w-md">
           {editFrente && (
             <FormFrente
@@ -251,7 +231,6 @@ export default function AdminFrentesPage() {
                 titulo: editFrente.titulo || editFrente.nome,
                 subtitulo: editFrente.subtitulo || '',
                 descricao: editFrente.descricao || '',
-                cores: editFrente.cores || '',
                 imagem: editFrente.imagem || null,
                 categoria: editFrente.tipo || 'umbanda',
               }}
@@ -261,6 +240,7 @@ export default function AdminFrentesPage() {
           )}
         </DialogContent>
       </Dialog>
+
     </div>
-  )
+  );
 }

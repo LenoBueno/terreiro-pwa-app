@@ -1,60 +1,41 @@
 import Link from "next/link";
-import "./mobile-navbar.css";
 import { usePathname } from "next/navigation";
-import { Home, Users, Calendar, User, BookOpen, MessageSquare, ShoppingCart, FileBarChart, Leaf, Droplets, MessageCircle, Brush } from "lucide-react";
+import { Home, Users, Calendar, MessageCircle, User } from "lucide-react";
 
 export default function MobileNavbar() {
   const pathname = usePathname();
-
-  const row1 = [
-    { href: "/admin/dashboard", icon: Home, label: "Dashboard" },
+  const navItems = [
+    { href: "/admin/dashboard", icon: Home, label: "Início" },
     { href: "/admin/frentes", icon: Users, label: "Frentes" },
     { href: "/admin/eventos", icon: Calendar, label: "Eventos" },
-    { href: "/admin/leitura", icon: BookOpen, label: "Leitura" },
-    { href: "/admin/mensagens", icon: MessageSquare, label: "Mensagens" },
-    { href: "/admin/limpeza", icon: Brush, label: "Limpeza" },
-  ];
-  const row2 = [
-    { href: "/admin/compras", icon: ShoppingCart, label: "Compras" },
-    { href: "/admin/ervas", icon: Leaf, label: "Ervas" },
-    { href: "/admin/banhos", icon: Droplets, label: "Banhos" },
     { href: "/admin/chat", icon: MessageCircle, label: "Chat" },
-    { href: "/admin/users", icon: Users, label: "Usuários" },
     { href: "/admin/profile", icon: User, label: "Perfil" },
   ];
 
   return (
-    <nav className="mobile-navbar md:hidden">
-      <div className="mobile-navbar-row">
-        {row1.map(({ href, icon: Icon, label }) => {
-          const isActive = pathname === href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`nav-item${isActive ? ' active' : ''}`}
-            >
-              <Icon size={18} />
-              <span>{label}</span>
-            </Link>
-          );
-        })}
-      </div>
-      <div className="mobile-navbar-row">
-        {row2.map(({ href, icon: Icon, label }) => {
-          const isActive = pathname === href;
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`nav-item${isActive ? ' active' : ''}`}
-            >
-              <Icon size={18} />
-              <span>{label}</span>
-            </Link>
-          );
-        })}
-      </div>
+    <nav className="fixed bottom-0 left-0 right-0 h-[4.5rem] bg-white/90 backdrop-blur-lg border-t border-gray-100/50 flex items-center justify-around px-6 z-50 pb-[env(safe-area-inset-bottom)]">
+      {navItems.map(({ href, icon: Icon, label }) => {
+        const isActive = pathname === href || 
+                       (href !== '/admin/dashboard' && pathname.startsWith(href));
+        
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={`flex flex-col items-center justify-center gap-1 ${
+              isActive ? "text-terreiro-green" : "text-gray-400"
+            }`}
+          >
+            <div className="relative">
+              <Icon size={20} strokeWidth={2} className={`transition-colors ${isActive ? "text-terreiro-green" : "text-gray-400"}`} />
+              {isActive && (
+                <span className="absolute -bottom-2 left-1/2 w-1 h-1 bg-terreiro-green rounded-full -translate-x-1/2" />
+              )}
+            </div>
+            <span className="text-[10px] font-medium">{label}</span>
+          </Link>
+        );
+      })}
     </nav>
   );
 }

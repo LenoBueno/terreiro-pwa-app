@@ -28,11 +28,12 @@ interface FormUsuariosProps {
     dataObrigacao: string
     cargo: string
     ativo: boolean
-  }) => void
+  }) => Promise<void> | void
   onCancel: () => void
+  isSubmitting?: boolean
 }
 
-export function FormUsuarios({ initialData, onSubmit, onCancel }: FormUsuariosProps) {
+export function FormUsuarios({ initialData, onSubmit, onCancel, isSubmitting = false }: FormUsuariosProps) {
   const [nome, setNome] = useState(initialData?.nome || "")
   const [sobrenome, setSobrenome] = useState(initialData?.sobrenome || "")
   const [dataNascimento, setDataNascimento] = useState(initialData?.dataNascimento || "")
@@ -104,7 +105,13 @@ export function FormUsuarios({ initialData, onSubmit, onCancel }: FormUsuariosPr
       </div>
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancelar</Button>
-        <Button type="submit" className="bg-terreiro-green hover:bg-terreiro-green/90">Salvar</Button>
+        <Button 
+          type="submit" 
+          className="bg-terreiro-green hover:bg-terreiro-green/90"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? 'Salvando...' : 'Salvar'}
+        </Button>
       </div>
     </form>
   )

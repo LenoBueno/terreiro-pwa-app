@@ -1,10 +1,20 @@
 "use client"
 
-import { useState } from "react"
-import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useMediaQuery } from "../../../../hooks/use-media-query"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
+import { Edit, Trash2, Plus, X, Users, ArrowLeft } from "lucide-react"
+import Link from "next/link"
+import { FormUsuarios } from "./FormUsuarios"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Table,
   TableHeader,
@@ -13,9 +23,6 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table"
-
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { FormUsuarios } from "./FormUsuarios"
 
 export type Usuario = {
   id: number
@@ -36,21 +43,31 @@ const usuariosMock: Usuario[] = [
   { id: 2, nome: "João", sobrenome: "da Paz", dataNascimento: "1985-05-10", telefone: "(21) 98888-2222", email: "joao@email.com", orixa: "Ogum", dataBatismo: "2001-05-10", dataObrigacao: "2011-05-10", cargo: "membro", ativo: false },
 ]
 
-import dynamic from "next/dynamic"
-import { useMediaQuery } from "react-responsive"
-const AdminUsersDesktop = dynamic(() => import("./AdminUsersDesktop"), { ssr: false })
-const AdminUsersMobile = dynamic(() => import("./AdminUsersMobile"), { ssr: false })
+// Carrega o componente mobile apenas no cliente
+const AdminUsersMobile = dynamic(
+  () => import('./AdminUsersMobile'),
+  { ssr: false }
+)
 
 export default function AdminUsersPage() {
-  const isMobile = useMediaQuery({ maxWidth: 767 })
-  if (typeof window === 'undefined') return null // Evita erro no SSR
-
   const router = useRouter()
+  const isMobile = useMediaQuery("(max-width: 768px)")
+  const [isClient, setIsClient] = useState(false)
   const [usuarios, setUsuarios] = useState<Usuario[]>(usuariosMock)
   const [activeTab, setActiveTab] = useState("todos")
   const [searchTerm, setSearchTerm] = useState("")
   const [openDialog, setOpenDialog] = useState(false)
   const [editUsuario, setEditUsuario] = useState<Usuario | null>(null)
+  
+  // Evita hidratação desnecessária
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Se for mobile e o cliente já estiver carregado, renderiza o componente mobile
+  if (isMobile && isClient) {
+    return <AdminUsersMobile />
+  }
 
   const filteredUsuarios = usuarios.filter(
     (usuario) =>

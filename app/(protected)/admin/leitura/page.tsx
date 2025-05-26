@@ -1,28 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useRouter } from "next/navigation"
-
-// Dados simulados iniciais
-const materiaisMock = [
-  { id: 1, titulo: "Guia Completo dos Orixás", subtitulo: "Tudo sobre Orixás", autor: "Carlos Silva", paginas: 120, arquivo: "guia-orixas.pdf" },
-  { id: 2, titulo: "Ervas Sagradas e seus Usos", subtitulo: "Ervas e Magia", autor: "Maria da Mata", paginas: 80, arquivo: "ervas-usos.pdf" },
-];
-
-function normalizeMaterial(m: any): { id: number; titulo: string; subtitulo: string; autor: string; paginas: number; arquivo: string } {
-  return {
-    id: m.id,
-    titulo: m.titulo,
-    subtitulo: m.subtitulo ?? "",
-    autor: m.autor ?? "",
-    paginas: m.paginas ?? 0,
-    arquivo: typeof m.arquivo === "string" ? m.arquivo : "",
-  };
-}
-
+import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
 import {
   Table,
   TableHeader,
@@ -31,22 +15,116 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table"
+import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog"
 import FormLeitura from "./FormLeitura";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+
+/** Tipos de abas disponíveis */
+const TABS = ["todos", "estudos", "guias", "historia"] as const;
+
+/** Tipo que representa uma aba específica */
+type TabType = typeof TABS[number];
+
+/**
+ * Carrega o componente mobile apenas no cliente
+ * @remarks
+ * Usamos importação dinâmica para melhorar o desempenho
+ * e evitar problemas de hidratação no Next.js
+ */
+const AdminLeituraMobile = dynamic(
+  () => import('./AdminLeituraMobile'),
+  { ssr: false }
+)
+
+/**
+ * Interface que representa um material de leitura
+ */
+interface Material {
+  /** ID único do material */
+  id: number;
+  /** Título principal do material */
+  titulo: string;
+  /** Subtítulo ou descrição curta */
+  subtitulo: string;
+  /** Nome do autor do material */
+  autor: string;
+  /** Número de páginas do material */
+  paginas: number;
+  /** Arquivo anexo (pode ser uma URL string ou objeto File) */
+  arquivo: string | File | null;
+  /** Categoria do material (opcional) */
+  categoria?: string;
+}
+
+/**
+ * Normaliza os dados de um material
+ * @param m - Objeto com os dados do material a serem normalizados
+ * @returns Objeto Material normalizado
+ */
+function normalizeMaterial(m: any): Material {
+  return {
+    id: m.id,
+    titulo: m.titulo,
+    subtitulo: m.subtitulo ?? "",
+    autor: m.autor ?? "",
+    paginas: m.paginas ?? 0,
+    arquivo: m.arquivo ?? null,
+    categoria: m.categoria ?? ""
+  };
+}
 
 export default function AdminLeituraPage() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("todos")
+  const isMobile = useMediaQuery("(max-width: 768px)")
+  const [isClient, setIsClient] = useState(false)
+  
+  // Evita hidratação desnecessária (SSR vs Client)
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Estado para controlar a aba ativa
+  const [activeTab, setActiveTab] = useState<TabType>("todos")
   const [searchTerm, setSearchTerm] = useState("")
   const [openDialog, setOpenDialog] = useState(false)
-  const [materialEdit, setMaterialEdit] = useState<any | null>(null)
-  const [materiais, setMateriais] = useState(materiaisMock)
+  const [materialEdit, setMaterialEdit] = useState<Material | null>(null)
+  const [materiais, setMateriais] = useState<Material[]>([
+    { 
+      id: 1, 
+      titulo: "Guia Completo dos Orixás", 
+      subtitulo: "Tudo sobre Orixás", 
+      autor: "Carlos Silva", 
+      paginas: 120, 
+      arquivo: "guia-orixas.pdf",
+      categoria: "guias"
+    },
+    { 
+      id: 2, 
+      titulo: "Ervas Sagradas e seus Usos", 
+      subtitulo: "Ervas e Magia", 
+      autor: "Maria da Mata", 
+      paginas: 80, 
+      arquivo: "ervas-usos.pdf",
+      categoria: "estudos"
+    },
+  ])
 
-  const filteredMateriais = materiais.filter(
-    (material) =>
-      material.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      material.autor.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  /**
+   * Filtra os materiais com base no termo de busca e na aba ativa
+   */
+  const filteredMateriais = materiais.filter((material) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      (activeTab === "todos" || material.categoria === activeTab) &&
+      (material.titulo.toLowerCase().includes(searchLower) ||
+       material.autor.toLowerCase().includes(searchLower) ||
+       material.subtitulo.toLowerCase().includes(searchLower))
+    );
+  })
+
+  // Se for mobile, renderiza o componente mobile
+  if (isClient && isMobile) {
+    return <AdminLeituraMobile />
+  }
 
   return (
     <div className="w-full bg-white flex flex-col pt-2 pb-[132px]" style={{ minHeight: '500px' }}>
@@ -71,7 +149,7 @@ export default function AdminLeituraPage() {
       {/* Botões à esquerda e abas à direita */}
       <div className="flex items-center gap-4 mb-4">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" className="admin-button" onClick={() => router.back()}>
+          <Button variant="ghost" className="admin-button" onClick={() => router.push('/admin/dashboard')}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar
           </Button>
@@ -101,46 +179,19 @@ export default function AdminLeituraPage() {
           </Dialog>
         </div>
         <div className="flex border-b ml-4">
-          <button
-            onClick={() => setActiveTab("todos")}
-            className={`admin-tab ${
-              activeTab === "todos"
-                ? "border-b-2 border-terreiro-green text-terreiro-green"
-                : "text-gray-600"
-            }`}
-          >
-            Todos
-          </button>
-          <button
-            onClick={() => setActiveTab("estudos")}
-            className={`admin-tab ${
-              activeTab === "estudos"
-                ? "border-b-2 border-terreiro-green text-terreiro-green"
-                : "text-gray-600"
-            }`}
-          >
-            Estudos
-          </button>
-          <button
-            onClick={() => setActiveTab("guias")}
-            className={`admin-tab ${
-              activeTab === "guias"
-                ? "border-b-2 border-terreiro-green text-terreiro-green"
-                : "text-gray-600"
-            }`}
-          >
-            Guias
-          </button>
-          <button
-            onClick={() => setActiveTab("historia")}
-            className={`admin-tab ${
-              activeTab === "historia"
-                ? "border-b-2 border-terreiro-green text-terreiro-green"
-                : "text-gray-600"
-            }`}
-          >
-            História
-          </button>
+          {TABS.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`admin-tab px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === tab
+                  ? "border-b-2 border-terreiro-green text-terreiro-green"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
         </div>
       </div>
 
@@ -177,13 +228,30 @@ export default function AdminLeituraPage() {
                 </TableCell>
                 <TableCell className="text-center align-middle px-4">
                   <div className="inline-flex justify-center gap-2 items-center">
-                    <Button variant="ghost" size="icon" onClick={() => { setMaterialEdit(material); setOpenDialog(true); }}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setMaterialEdit(material);
+                        setOpenDialog(true);
+                      }}
+                      className="h-8 w-8 p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50"
+                    >
                       <Edit className="h-4 w-4" />
-                      <span className="sr-only">Editar</span>
                     </Button>
-                    <Button variant="ghost" size="icon" onClick={() => setMateriais(materiais.filter(m => m.id !== material.id))} className="text-terreiro-red">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm('Tem certeza que deseja excluir este material?')) {
+                          setMateriais(materiais.filter(m => m.id !== material.id));
+                        }
+                      }}
+                      className="h-8 w-8 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                    >
                       <Trash2 className="h-4 w-4" />
-                      <span className="sr-only">Excluir</span>
                     </Button>
                   </div>
                 </TableCell>

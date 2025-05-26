@@ -1,22 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import AdminLayoutDesktop from "./AdminLayoutDesktop";
 import AdminLayoutMobile from "./AdminLayoutMobile";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  const [isMobile, setIsMobile] = useState(false);
+  const isMobile = useIsMobile();
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 767);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  if (isMobile) {
+    return <AdminLayoutMobile>{children}</AdminLayoutMobile>;
+  }
 
-  return isMobile ? (
-    <AdminLayoutMobile>{children}</AdminLayoutMobile>
-  ) : (
-    <AdminLayoutDesktop>{children}</AdminLayoutDesktop>
-  );
+  return <AdminLayoutDesktop>{children}</AdminLayoutDesktop>;
 }
 

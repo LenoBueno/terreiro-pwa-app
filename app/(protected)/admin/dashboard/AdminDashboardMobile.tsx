@@ -1,41 +1,75 @@
-import MobileNavbar from "./MobileNavbar"
-import Image from "next/image"
-import { Users, Calendar, BookOpen, MessageSquare, Brush, ShoppingCart, Leaf, Droplets, MessageCircle, User } from "lucide-react";
-
-export default function AdminDashboardMobile() {
-  const cards = [
-    { href: "/admin/frentes", icon: Users, label: "Frentes" },
-    { href: "/admin/eventos", icon: Calendar, label: "Eventos" },
-    { href: "/admin/leitura", icon: BookOpen, label: "Leitura" },
-    { href: "/admin/mensagens", icon: MessageSquare, label: "Mensagens" },
-    { href: "/admin/limpeza", icon: Brush, label: "Limpeza" },
-    { href: "/admin/compras", icon: ShoppingCart, label: "Compras" },
-    { href: "/admin/ervas", icon: Leaf, label: "Ervas" },
-    { href: "/admin/banhos", icon: Droplets, label: "Banhos" },
-    { href: "/admin/chat", icon: MessageCircle, label: "Chat" },
-    { href: "/admin/users", icon: Users, label: "Usuários" },
-    { href: "/admin/profile", icon: User, label: "Perfil" },
+import {
+    MapPin,
+    Menu,
+    Users,
+    Calendar,
+    BookOpen,
+    MessageSquare,
+    ShoppingBag,
+    Leaf,
+    Droplets,
+    ClipboardList,
+    Plus,
+    FileText,
+    Settings,
+    Search,
+  } from "lucide-react";
+  import { Avatar } from "@/components/ui/avatar";
+  import Link from "next/link";
+  import { useRouter } from 'next/navigation';
+  
+  
+  const menuPages = [
+    { icon: BookOpen, label: "Frentes", href: "/admin/frentes" },
+    { icon: Calendar, label: "Eventos", href: "/admin/eventos" },
+    { icon: FileText, label: "Leitura", href: "/admin/leitura" },
+    { icon: MessageSquare, label: "Mensagens", href: "/admin/mensagens" },
+    { icon: ClipboardList, label: "Limpeza", href: "/admin/limpeza" },
+    { icon: ShoppingBag, label: "Compras", href: "/admin/compras" },
+    { icon: Leaf, label: "Ervas", href: "/admin/ervas" },
+    { icon: Droplets, label: "Banhos", href: "/admin/banhos" },
+    { icon: MessageSquare, label: "Chat", href: "/admin/chat" },
+    { icon: Users, label: "Usuários", href: "/admin/users" },
   ];
-
-  return (
-    <div className="w-screen min-h-screen bg-white flex flex-col p-4 pb-[132px] overflow-y-auto">
-      <div className="mb-4 mt-2">
-        <h2 className="text-xl font-bold tracking-tight">Dashboard</h2>
-        <p className="text-sm text-muted-foreground">Bem-vindo ao painel administrativo do terreiro.</p>
+  
+  export default function AdminDashboardMobile() {
+    const router = useRouter();
+    // Usar todas as páginas do menu
+  
+    return (
+      <div className="fixed inset-0 bg-[#006B3F] pt-16">
+        {/* Conteúdo Principal */}
+        <main className="absolute top-28 bottom-0 left-0 right-0 bg-white p-9 overflow-auto rounded-t-[35px] shadow-[0_0_15px_rgba(0,0,0,0.10)]">
+          <div className="mb-6">
+            <h2 className="text-lg font-medium text-[#006B3F] mb-4">INÍCIO</h2>
+            <div className="relative mb-6">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Pesquisar..."
+                className="w-full pl-10 pr-4 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/50 focus:border-transparent"
+              />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-4 gap-2">
+            {menuPages.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex flex-col items-center p-2 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                <div className="relative w-16 h-16 mx-auto rounded-full overflow-hidden mb-2 shadow-[0_0px_7px_rgba(0,0,0,0.1)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.15)] transition-all duration-200 bg-white flex items-center justify-center">
+                  <item.icon size={20} className="text-[#006B3F]" />
+                </div>
+                <span className="text-xs text-center font-medium text-gray-700 group-hover:text-[#006B3F] transition-colors">
+                  {item.label}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </main>
       </div>
-      
-      <div className="w-full grid grid-cols-2 gap-4 px-1 place-items-center">
-        {cards.map(({ href, icon: Icon, label }) => (
-          <a
-            key={href}
-            href={href}
-            className="flex flex-col items-center justify-center bg-[#f7f8fa] shadow rounded-[16px] transition hover:shadow-md h-[110px] w-[140px] min-w-0"
-          >
-            <Icon size={22} className="mb-2 text-terreiro-green" />
-            <span className="text-sm font-medium text-gray-700 text-center">{label}</span>
-          </a>
-        ))}
-      </div>
-    </div>
-  )
-}
+    );
+  }
+  

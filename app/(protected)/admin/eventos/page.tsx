@@ -1,5 +1,12 @@
 "use client"
 
+import { useIsMobile } from "@/hooks/use-mobile"
+import dynamic from "next/dynamic"
+
+// Carrega a versão mobile apenas no cliente para evitar problemas de SSR
+const MobileView = dynamic(() => import('./page.mobile'), { ssr: false })
+
+// Componente Desktop
 import { useState } from "react"
 import { Edit, Trash2, ArrowLeft, Plus, X, Calendar, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -34,7 +41,7 @@ function normalizeEvento(e: any): { id: number; titulo: string; subtitulo: strin
   };
 }
 
-export default function AdminEventosPage() {
+function DesktopView() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("proximos")
   const [searchTerm, setSearchTerm] = useState("")
@@ -169,4 +176,14 @@ export default function AdminEventosPage() {
       </div>
     </div>
   )
+}
+
+export default function AdminEventosPage() {
+  const isMobile = useIsMobile()
+
+  if (isMobile) {
+    return <MobileView />
+  }
+
+  return <DesktopView />
 }
