@@ -17,10 +17,12 @@ interface Mensagem {
   descricao: string;
   data: string;
   urgente: boolean;
+  rascunho?: boolean; // Propriedade para indicar se é um rascunho
 }
 
 export default function AdminMensagensMobile() {
   const [busca, setBusca] = useState("");
+  const [abaAtiva, setAbaAtiva] = useState<string>("todas");
   const router = useRouter();
   
   // Dados simulados - em uma aplicação real, isso viria de uma API
@@ -31,14 +33,16 @@ export default function AdminMensagensMobile() {
       subtitulo: "Planejamento mensal",
       descricao: "Reunião para planejar as atividades do próximo mês",
       data: "2024-06-10",
-      urgente: true
+      urgente: true,
+      rascunho: false
     },
     {
       id: 2,
       titulo: "Festa Junina",
       descricao: "Venha participar da nossa festa junina",
       data: "2024-06-23",
-      urgente: false
+      urgente: false,
+      rascunho: true
     }
   ]);
 
@@ -58,12 +62,18 @@ export default function AdminMensagensMobile() {
     router.push(`/admin/mensagens/${id}`);
   };
 
-  // Filtrar mensagens
-  const filteredMensagens = mensagens.filter(mensagem => 
-    mensagem.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-    (mensagem.subtitulo && mensagem.subtitulo.toLowerCase().includes(busca.toLowerCase())) ||
-    mensagem.descricao.toLowerCase().includes(busca.toLowerCase())
-  );
+  // Filtrar mensagens por aba
+  const mensagensFiltradas = mensagens.filter((mensagem) => {
+    const buscaLower = busca.toLowerCase();
+    const correspondeABusca =
+      mensagem.titulo.toLowerCase().includes(buscaLower) ||
+      (mensagem.subtitulo && mensagem.subtitulo.toLowerCase().includes(buscaLower)) ||
+      mensagem.descricao.toLowerCase().includes(buscaLower);
+    if (abaAtiva === "todas") return correspondeABusca;
+    if (abaAtiva === "enviadas") return correspondeABusca && !mensagem.rascunho;
+    if (abaAtiva === "rascunhos") return correspondeABusca && mensagem.rascunho;
+    return false;
+  });
 
   // Excluir mensagem
   const excluirMensagem = (id: number) => {
@@ -99,46 +109,61 @@ export default function AdminMensagensMobile() {
           />
         </div>
 
+        {/* Abas de Filtro */}
+        <div className="flex items-center mb-6">
+          <div className="flex space-x-1 w-full justify-start">
+            <button
+              onClick={() => setAbaAtiva('todas')}
+              className={`px-4 py-2 text-sm font-medium ${abaAtiva === 'todas' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Todas
+            </button>
+            <button
+              onClick={() => setAbaAtiva('enviadas')}
+              className={`px-4 py-2 text-sm font-medium ${abaAtiva === 'enviadas' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Enviadas
+            </button>
+            <button
+              onClick={() => setAbaAtiva('rascunhos')}
+              className={`px-4 py-2 text-sm font-medium ${abaAtiva === 'rascunhos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Rascunhos
+            </button>
+          </div>
+        </div>
+
         {/* Lista de mensagens em cards */}
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3 md:gap-4">
-          {filteredMensagens.length === 0 ? (
-            <div className="col-span-full text-center py-8 text-gray-500">
+        <div className="space-y-4">
+          {mensagensFiltradas.length === 0 ? (
+            <div className="text-center py-8 text-gray-500">
               Nenhuma mensagem encontrada
             </div>
           ) : (
-            filteredMensagens.map((mensagem) => (
-              <Card 
+            mensagensFiltradas.map((mensagem) => (
+              <div
                 key={mensagem.id}
-                className="w-full h-[140px] cursor-pointer"
                 onClick={() => editarMensagem(mensagem.id)}
+                className="group flex items-center p-4 bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.10)] hover:shadow-[0_0_20px_rgba(0,0,0,0.15)] transition-all duration-200 cursor-pointer"
               >
-                <CardHeader className="gap-1 p-2">
-                  <div className="flex items-center justify-between w-full pb-1">
-                    <CardTitle className="text-[10px] sm:text-xs font-medium text-gray-900 truncate max-w-[70px] sm:max-w-[90px]">
-                      {mensagem.titulo}
-                    </CardTitle>
-                    {mensagem.urgente && (
-                      <Badge variant="outline" className="bg-red-50 text-red-700 border-red-100 text-[8px] px-1.5 py-0 rounded-full">
-                        Urgente
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="p-2 flex-1 flex flex-col">
+                <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-[#006B3F]/10 flex items-center justify-center text-[#006B3F] mr-4">
+                  <Calendar className="h-6 w-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-medium text-gray-900 truncate group-hover:text-[#006B3F] transition-colors">
+                    {mensagem.titulo}
+                  </h3>
                   {mensagem.subtitulo && (
-                    <p className="text-[9px] text-gray-500 mb-0.5 line-clamp-1">
-                      {mensagem.subtitulo}
-                    </p>
+                    <p className="text-xs text-gray-500 truncate">{mensagem.subtitulo}</p>
                   )}
-                  <p className="text-[9px] sm:text-[10px] text-gray-600 line-clamp-2 mb-1">
-                    {mensagem.descricao}
+                  <p className="text-xs text-gray-400 mt-1">
+                    {formatarData(mensagem.data)}
+                    {mensagem.urgente && (
+                      <span className="ml-2 inline-block bg-red-50 text-red-700 border border-red-100 text-[10px] px-2 py-0.5 rounded-full align-middle">Urgente</span>
+                    )}
                   </p>
-                  <div className="flex items-center text-[8px] sm:text-[10px] text-gray-500 mt-auto pt-1 border-t border-gray-100">
-                    <Calendar className="h-2 w-2 sm:h-2.5 sm:w-2.5 mr-0.5 text-gray-400" />
-                    <span className="text-gray-600 truncate">{formatarData(mensagem.data)}</span>
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             ))
           )}
         </div>

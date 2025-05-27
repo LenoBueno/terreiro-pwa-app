@@ -18,6 +18,7 @@ export default function AdminEventosMobile() {
   const router = useRouter()
   const [busca, setBusca] = useState("")
   const [eventos, setEventos] = useState<Evento[]>([])
+  const [categoriaAtiva, setCategoriaAtiva] = useState<string>('todos')
   
   // Carregar eventos - em uma aplicação real, isso viria de uma API
   useEffect(() => {
@@ -57,11 +58,18 @@ export default function AdminEventosMobile() {
     fetchEventos();
   }, [])
 
-  // Filtra os eventos com base na busca
-  const eventosFiltrados = eventos.filter(evento => 
-    evento.titulo.toLowerCase().includes(busca.toLowerCase()) ||
-    (evento.subtitulo && evento.subtitulo.toLowerCase().includes(busca.toLowerCase()))
-  )
+  // Filtra os eventos com base na busca e categoria
+  const eventosFiltrados = eventos.filter(evento => {
+    const buscaLower = busca.toLowerCase();
+    const correspondeABusca =
+      evento.titulo.toLowerCase().includes(buscaLower) ||
+      (evento.subtitulo && evento.subtitulo.toLowerCase().includes(buscaLower));
+    if (categoriaAtiva === 'todos') return correspondeABusca;
+    if (categoriaAtiva === 'umbanda') return correspondeABusca && evento.titulo.toLowerCase().includes('umbanda');
+    if (categoriaAtiva === 'nacao') return correspondeABusca && evento.titulo.toLowerCase().includes('nação');
+    if (categoriaAtiva === 'festas') return correspondeABusca && evento.titulo.toLowerCase().includes('festa');
+    return false;
+  })
 
   // Função para formatar a data
   const formatarData = (dataString: string) => {
@@ -107,6 +115,36 @@ export default function AdminEventosMobile() {
             onChange={(e) => setBusca(e.target.value)}
             className="w-full pl-10 pr-4 py-2 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#006B3F]/50 focus:border-transparent"
           />
+        </div>
+
+        {/* Abas de Filtro */}
+        <div className="flex items-center mb-6">
+          <div className="flex space-x-1 w-full justify-start">
+            <button
+              onClick={() => setCategoriaAtiva('todos')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'todos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('umbanda')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'umbanda' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Umbanda
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('nacao')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'nacao' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Nação
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('festas')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'festas' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Festas
+            </button>
+          </div>
         </div>
 
         {/* Lista de Eventos */}

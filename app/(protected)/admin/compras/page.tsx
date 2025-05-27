@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -19,6 +19,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { useRouter } from "next/navigation"
 import FormCompras from "./FormCompras"
+import { useMediaQuery } from "../../../../hooks/use-media-query"
+import dynamic from "next/dynamic"
+
+// Carrega o componente mobile apenas no cliente
+const AdminComprasMobile = dynamic(
+  () => import('./AdminComprasMobile'),
+  { ssr: false }
+)
 
 // Dados simulados de compras
 const comprasIniciais = [
@@ -49,6 +57,8 @@ const comprasIniciais = [
 ]
 
 export default function AdminComprasPage() {
+  const isMobile = useMediaQuery("(max-width: 768px)")
+  const [isClient, setIsClient] = useState(false)
   const [compras, setCompras] = useState(comprasIniciais)
   const [filtro, setFiltro] = useState("todos")
   const [busca, setBusca] = useState("")
@@ -66,6 +76,16 @@ export default function AdminComprasPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [activeTab, setActiveTab] = useState("todos")
   const router = useRouter()
+
+  // Evita hidratação desnecessária
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Se for mobile e o cliente já estiver carregado, renderiza o componente mobile
+  if (isMobile && isClient) {
+    return <AdminComprasMobile />
+  }
 
   // Filtrar compras
   const comprasFiltradas = compras

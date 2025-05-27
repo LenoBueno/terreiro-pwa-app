@@ -122,36 +122,7 @@ export default function AdminLeituraMobile() {
           <h1 className="text-xl font-semibold text-[#006B3F]">Materiais de Leitura</h1>
         </div>
 
-        {/* Abas de Filtro */}
-        <div className="flex items-center mb-6">
-          <div className="flex space-x-1">
-            <button
-              onClick={() => setCategoriaAtiva('todos')}
-              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'todos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
-            >
-              Todos
-            </button>
-            <button
-              onClick={() => setCategoriaAtiva('estudos')}
-              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'estudos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
-            >
-              Estudos
-            </button>
-            <button
-              onClick={() => setCategoriaAtiva('guias')}
-              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'guias' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
-            >
-              Guias
-            </button>
-            <button
-              onClick={() => setCategoriaAtiva('historia')}
-              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'historia' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
-            >
-              História
-            </button>
-          </div>
-        </div>
-        
+        {/* Barra de pesquisa */}
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
@@ -163,6 +134,36 @@ export default function AdminLeituraMobile() {
           />
         </div>
 
+        {/* Abas de Filtro */}
+        <div className="flex items-center mb-6">
+          <div className="flex space-x-1 w-full justify-between">
+            <button
+              onClick={() => setCategoriaAtiva('todos')}
+              className={`flex-1 px-4 py-2 text-sm font-medium ${categoriaAtiva === 'todos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('estudos')}
+              className={`flex-1 px-4 py-2 text-sm font-medium ${categoriaAtiva === 'estudos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Estudos
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('guias')}
+              className={`flex-1 px-4 py-2 text-sm font-medium ${categoriaAtiva === 'guias' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Guias
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('historia')}
+              className={`flex-1 px-4 py-2 text-sm font-medium ${categoriaAtiva === 'historia' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              História
+            </button>
+          </div>
+        </div>
+        
         <div className="space-y-4">
           {materiaisFiltrados.length > 0 ? (
             materiaisFiltrados.map((material) => (
