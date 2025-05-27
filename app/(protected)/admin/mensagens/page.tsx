@@ -1,17 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import dynamic from "next/dynamic"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { useRouter } from "next/navigation"
-
-// Dados simulados iniciais
-const mensagensMock = [
-  { id: 1, titulo: "Alteração na data da Gira", subtitulo: "Nova data em junho", descricao: "A gira foi remarcada para 10/06.", data: "2025-06-01", urgente: true },
-  { id: 2, titulo: "Doações para a Festa", subtitulo: "Colabore!", descricao: "Estamos arrecadando doações.", data: "2025-05-15", urgente: false },
-];
-
+import { Edit, Trash2, ArrowLeft, Plus, X } from "lucide-react"
 import {
   Table,
   TableHeader,
@@ -20,22 +15,111 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table"
-import FormMensagem from "./FormMensagem";
-import { Dialog, DialogTrigger, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+} from "@/components/ui/dialog"
+import FormMensagem from "./FormMensagem"
+
+// Carrega o componente mobile apenas no cliente
+const AdminMensagensMobile = dynamic(
+  () => import('./AdminMensagensMobile'),
+  { ssr: false }
+)
+
+// Tipagem para as mensagens
+interface Mensagem {
+  id: number
+  titulo: string
+  subtitulo?: string
+  descricao: string
+  data: string
+  urgente: boolean
+  autor?: string
+}
 
 export default function AdminMensagensPage() {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("todas")
+  const isMobile = useMediaQuery("(max-width: 768px)")
+  const [isClient, setIsClient] = useState(false)
+  
+  // Estados para o gerenciamento de mensagens
   const [searchTerm, setSearchTerm] = useState("")
   const [openDialog, setOpenDialog] = useState(false)
-  const [mensagemEdit, setMensagemEdit] = useState<any | null>(null)
-  const [mensagens, setMensagens] = useState(mensagensMock)
+  const [mensagemEdit, setMensagemEdit] = useState<Mensagem | null>(null)
+  const [activeTab, setActiveTab] = useState("todas")
+  
+  // Dados simulados - em uma aplicação real, isso viria de uma API
+  const [mensagens, setMensagens] = useState<Mensagem[]>([
+    { 
+      id: 1, 
+      titulo: "Alteração na data da Gira", 
+      subtitulo: "Nova data em junho", 
+      descricao: "Avisamos que a gira foi remarcada para o dia 10/06. Por favor, atualizem suas agendas.", 
+      data: "2025-06-01", 
+      urgente: true,
+      autor: "Admin"
+    },
+    { 
+      id: 2, 
+      titulo: "Doações para a Festa", 
+      subtitulo: "Colabore!", 
+      descricao: "Estamos arrecadando doações para a próxima festa. Contamos com a colaboração de todos.", 
+      data: "2025-05-15", 
+      urgente: false,
+      autor: "Tesouraria"
+    },
+  ])
 
+  // Evita hidratação desnecessária
+  useEffect(() => {
+    setIsClient(true)
+  }, [])
+
+  // Se for mobile e o cliente já estiver carregado, renderiza o componente mobile
+  if (isMobile && isClient) {
+    return <AdminMensagensMobile />
+  }
+
+  // Filtrar mensagens
   const filteredMensagens = mensagens.filter(
     (mensagem) =>
       mensagem.titulo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mensagem.autor.toLowerCase().includes(searchTerm.toLowerCase()),
+      (mensagem.autor?.toLowerCase().includes(searchTerm.toLowerCase()) || false) ||
+      mensagem.descricao.toLowerCase().includes(searchTerm.toLowerCase())
   )
+
+  // Formatar data
+  const formatarData = (dataString: string) => {
+    const options: Intl.DateTimeFormatOptions = { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric' 
+    }
+    return new Date(dataString).toLocaleDateString('pt-BR', options)
+  }
+
+  // Salvar mensagem (criar ou atualizar)
+  const salvarMensagem = (data: any) => {
+    if (mensagemEdit) {
+      // Atualizar mensagem existente
+      setMensagens(
+        mensagens.map((m) =>
+          m.id === mensagemEdit.id ? { ...data, id: mensagemEdit.id } : m
+        )
+      )
+    } else {
+      // Adicionar nova mensagem
+      const novaMensagem = {
+        ...data,
+        id: Date.now(),
+      }
+      setMensagens([...mensagens, novaMensagem])
+    }
+    setOpenDialog(false)
+    setMensagemEdit(null)
+  }
 
   return (
     <div className="w-full bg-white flex flex-col pt-2 pb-[132px]" style={{ minHeight: '500px' }}>

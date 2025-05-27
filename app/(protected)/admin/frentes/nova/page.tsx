@@ -22,7 +22,7 @@ export default function NovaFrentePage() {
       <main className="absolute top-28 bottom-0 left-0 right-0 bg-white p-6 overflow-auto rounded-t-[35px] shadow-[0_0_15px_rgba(0,0,0,0.10)]">
         {/* Cabeçalho */}
         <div className="flex items-center mb-6">
-          <Link href="/admin/frentes">
+          <Link href="/admin/frentes">  
             <Button variant="ghost" size="icon" className="p-2 rounded-full hover:bg-gray-100 mr-2">
               <ArrowLeft className="h-5 w-5 text-[#006B3F]" />
             </Button>

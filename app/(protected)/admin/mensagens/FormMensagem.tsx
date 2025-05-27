@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 
 interface FormMensagemProps {
@@ -24,11 +23,13 @@ const FormMensagem: React.FC<FormMensagemProps> = ({ initial, onCancel, onSave }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <DialogHeader>
-        <DialogTitle>{initial ? "Editar Mensagem" : "Adicionar Mensagem"}</DialogTitle>
-        <DialogDescription>Preencha os dados da mensagem.</DialogDescription>
-      </DialogHeader>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="space-y-2">
+        <h2 className="text-xl font-semibold text-[#006B3F]">
+          {initial ? "Editar Mensagem" : "Adicionar Mensagem"}
+        </h2>
+        <p className="text-sm text-gray-500">Preencha os dados da mensagem.</p>
+      </div>
       <div className="space-y-2">
         <Label htmlFor="titulo">Título</Label>
         <Input id="titulo" value={titulo} onChange={e => setTitulo(e.target.value)} required />
@@ -49,10 +50,14 @@ const FormMensagem: React.FC<FormMensagemProps> = ({ initial, onCancel, onSave }
         <Switch checked={urgente} onCheckedChange={setUrgente} id="urgente" />
         <Label htmlFor="urgente">Urgente?</Label>
       </div>
-      <DialogFooter>
-        <Button variant="outline" type="button" onClick={onCancel}>Cancelar</Button>
-        <Button className="bg-terreiro-green hover:bg-terreiro-green/90" type="submit">Salvar</Button>
-      </DialogFooter>
+      <div className="flex justify-end space-x-4 pt-4 border-t">
+        <Button variant="outline" type="button" onClick={onCancel}>
+          Cancelar
+        </Button>
+        <Button className="bg-terreiro-green hover:bg-terreiro-green/90" type="submit">
+          Salvar
+        </Button>
+      </div>
     </form>
   );
 };

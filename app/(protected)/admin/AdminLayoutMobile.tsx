@@ -26,6 +26,7 @@ import { Avatar } from "@/components/ui/avatar";
 import Link from "next/link";
 
 const menuItems = [
+  { icon: Home, label: "Dashboard", href: "/admin/dashboard" },
   { icon: Users, label: "Frentes", href: "/admin/frentes" },
   { icon: Calendar, label: "Eventos", href: "/admin/eventos" },
   { icon: BookOpen, label: "Leitura", href: "/admin/leitura" },

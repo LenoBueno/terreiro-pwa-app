@@ -236,7 +236,7 @@ export default function AdminLeituraPage() {
                         setMaterialEdit(material);
                         setOpenDialog(true);
                       }}
-                      className="h-8 w-8 p-1.5 text-gray-400 hover:text-blue-500 hover:bg-blue-50"
+                      className="h-8 w-8 p-1.5 text-black hover:bg-gray-100"
                     >
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -249,7 +249,7 @@ export default function AdminLeituraPage() {
                           setMateriais(materiais.filter(m => m.id !== material.id));
                         }
                       }}
-                      className="h-8 w-8 p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                      className="h-8 w-8 p-1.5 text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

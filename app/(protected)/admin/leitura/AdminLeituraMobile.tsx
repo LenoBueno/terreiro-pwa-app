@@ -1,9 +1,28 @@
 "use client";
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Search, Plus, ArrowLeft, FileText, Edit, Trash2 } from "lucide-react";
+import { Search, Plus, ArrowLeft, FileText } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
+// Estilos globais para esconder a barra de rolagem
+const styles = `
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+`;
+
+// Adiciona os estilos ao head do documento
+if (typeof document !== 'undefined') {
+  const styleElement = document.createElement('style');
+  styleElement.textContent = styles;
+  document.head.appendChild(styleElement);
+}
 
 /**
  * Interface que representa um material de leitura
@@ -28,6 +47,7 @@ interface Material {
 export default function AdminLeituraMobile() {
   const router = useRouter();
   const [busca, setBusca] = useState("");
+  const [categoriaAtiva, setCategoriaAtiva] = useState<string>('todos');
   
   // Dados simulados - substituir por chamada à API
   const [materiais, setMateriais] = useState<Material[]>([
@@ -53,11 +73,14 @@ export default function AdminLeituraMobile() {
 
   const materiaisFiltrados = materiais.filter(material => {
     const buscaLower = busca.toLowerCase();
-    return (
+    const correspondeABusca = 
       material.titulo.toLowerCase().includes(buscaLower) ||
       material.subtitulo.toLowerCase().includes(buscaLower) ||
-      material.autor.toLowerCase().includes(buscaLower)
-    );
+      material.autor.toLowerCase().includes(buscaLower);
+    
+    if (categoriaAtiva === 'todos') return correspondeABusca;
+    
+    return correspondeABusca && material.categoria === categoriaAtiva;
   });
 
   /**
@@ -99,6 +122,36 @@ export default function AdminLeituraMobile() {
           <h1 className="text-xl font-semibold text-[#006B3F]">Materiais de Leitura</h1>
         </div>
 
+        {/* Abas de Filtro */}
+        <div className="flex items-center mb-6">
+          <div className="flex space-x-1">
+            <button
+              onClick={() => setCategoriaAtiva('todos')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'todos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Todos
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('estudos')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'estudos' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Estudos
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('guias')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'guias' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              Guias
+            </button>
+            <button
+              onClick={() => setCategoriaAtiva('historia')}
+              className={`px-4 py-2 text-sm font-medium ${categoriaAtiva === 'historia' ? 'text-[#006B3F] border-b-2 border-[#006B3F]' : 'text-gray-500 hover:text-[#006B3F]'}`}
+            >
+              História
+            </button>
+          </div>
+        </div>
+        
         <div className="relative mb-6">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input
@@ -115,42 +168,22 @@ export default function AdminLeituraMobile() {
             materiaisFiltrados.map((material) => (
               <div 
                 key={material.id}
-                className="group flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
                 onClick={() => router.push(`/admin/leitura/${material.id}`)}
+                className="group flex items-center p-4 bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.10)] hover:shadow-[0_0_20px_rgba(0,0,0,0.15)] transition-all duration-200 cursor-pointer"
               >
                 <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-[#006B3F]/10 flex items-center justify-center text-[#006B3F] mr-4">
-                  <FileText size={24} />
+                  <FileText className="h-6 w-6" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-medium text-gray-900 truncate">{material.titulo}</h3>
-                  <p className="text-sm text-gray-500 truncate">{material.subtitulo}</p>
-                  <p className="text-xs text-gray-400 mt-1">{material.autor} • {material.paginas} págs</p>
-                </div>
-                <div className="flex space-x-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleEditar(material.id);
-                    }}
-                    className="p-1.5 text-gray-400 hover:text-[#006B3F] rounded-full hover:bg-gray-100 h-8 w-8"
-                    aria-label={`Editar ${material.titulo}`}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleExcluir(material.id);
-                    }}
-                    className="p-1.5 text-gray-400 hover:text-red-500 rounded-full hover:bg-red-50 h-8 w-8"
-                    aria-label={`Excluir ${material.titulo}`}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <h3 className="text-sm font-medium text-gray-900 truncate group-hover:text-[#006B3F] transition-colors">
+                    {material.titulo}
+                  </h3>
+                  {material.subtitulo && (
+                    <p className="text-xs text-gray-500 truncate">{material.subtitulo}</p>
+                  )}
+                  <p className="text-xs text-gray-400 mt-1">
+                    {material.autor}
+                  </p>
                 </div>
               </div>
             ))

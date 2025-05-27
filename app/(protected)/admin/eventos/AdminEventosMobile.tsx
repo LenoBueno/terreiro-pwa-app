@@ -116,7 +116,7 @@ export default function AdminEventosMobile() {
               <div 
                 key={evento.id}
                 onClick={() => router.push(`/admin/eventos/${evento.id}`)}
-                className="group flex items-center p-4 bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer"
+                className="group flex items-center p-4 bg-white rounded-2xl shadow-[0_0_15px_rgba(0,0,0,0.10)] hover:shadow-[0_0_20px_rgba(0,0,0,0.15)] transition-all duration-200 cursor-pointer"
               >
                 <div className="flex-shrink-0 w-14 h-14 rounded-lg bg-[#006B3F]/10 flex items-center justify-center text-[#006B3F] mr-4">
                   <Calendar className="h-6 w-6" />
