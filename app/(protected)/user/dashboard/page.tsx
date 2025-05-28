@@ -13,7 +13,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
         <Link href="/user/frentes">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-rose-500 via-blue-500 to-amber-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <User className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -38,7 +38,7 @@ export default function DashboardPage() {
 
         <Link href="/user/eventos">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-orange-500 to-yellow-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <Calendar className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -63,7 +63,7 @@ export default function DashboardPage() {
 
         <Link href="/user/leitura">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <Book className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -85,7 +85,7 @@ export default function DashboardPage() {
 
         <Link href="/user/mensagens">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-green-500 to-emerald-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <MessageSquare className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
         <Link href="/user/limpeza">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-purple-500 to-violet-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <Broom className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -132,7 +132,7 @@ export default function DashboardPage() {
 
         <Link href="/user/compras">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-amber-500 to-yellow-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <ShoppingCart className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
 
         <Link href="/user/ervas">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-green-500 to-lime-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <Leaf className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -178,7 +178,7 @@ export default function DashboardPage() {
 
         <Link href="/user/banhos">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-cyan-500 to-blue-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <Droplets className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -202,7 +202,7 @@ export default function DashboardPage() {
 
         <Link href="/user/chat">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-pink-500 to-rose-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <MessageCircle className="h-6 w-6 text-terreiro-green" />
               <div>
@@ -224,7 +224,7 @@ export default function DashboardPage() {
 
         <Link href="/user/profile">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md overflow-hidden">
-            <div className="absolute top-0 h-1 w-full bg-gradient-to-r from-gray-500 to-slate-500"></div>
+
             <CardHeader className="flex flex-row items-center gap-2 p-4 pb-0">
               <User className="h-6 w-6 text-terreiro-green" />
               <div>

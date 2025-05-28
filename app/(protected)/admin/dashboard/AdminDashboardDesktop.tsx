@@ -10,7 +10,7 @@ export default function AdminDashboardDesktop() {
         <p className="text-sm text-muted-foreground">Bem-vindo ao painel administrativo do terreiro.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-9">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <Link href="/admin/frentes">
           <Card className="w-[200px] h-[200px] transition-all hover:shadow-md">
             <CardHeader className="flex flex-row items-center gap-2 p-4">
